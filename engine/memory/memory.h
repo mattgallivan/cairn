@@ -1,6 +1,8 @@
 #ifndef MEMORY_H
 #define MEMORY_H
 
+#include <cstdlib>
+
 #include "types.h"
 
 namespace Cairn {

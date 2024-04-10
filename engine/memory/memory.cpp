@@ -3,14 +3,14 @@
 namespace Cairn {
 
 StackAllocator::StackAllocator(Size size) {
-  memory = malloc(size);
+  memory = static_cast<Byte*>(malloc(size));
   pointer = memory;
   stack_size = size;
 }
 
 StackAllocator::~StackAllocator() { free(memory); }
 
-StackAllocator::allocate(Size size) {
+void* StackAllocator::allocate(Size size) {
   if (pointer + size > memory + stack_size) {
     return nullptr;
   }
@@ -19,8 +19,8 @@ StackAllocator::allocate(Size size) {
   return result;
 }
 
-StackAllocator::deallocate(void* pointer) {}
+void StackAllocator::deallocate(void* pointer) {}
 
-StackAllocator::reset() { pointer = memory; }
+void StackAllocator::reset() { pointer = memory; }
 
 }; // namespace Cairn
