@@ -18,6 +18,9 @@ using I64 = int64_t;
 using F32 = float;
 using F64 = double;
 
-}
+using Byte = U8;
+using Size = size_t;
+
+} // namespace Cairn
 
 #endif // TYPES_H
