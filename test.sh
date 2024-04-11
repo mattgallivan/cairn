@@ -16,6 +16,6 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-ctest -V
+ctest
 
 cd "$PROJECT_ROOT_DIR"

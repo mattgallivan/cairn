@@ -1,5 +1,6 @@
-#include "memory/memory.h"
 #include <gtest/gtest.h>
+
+#include "memory/memory.h"
 
 class StackAllocatorTest : public ::testing::Test {
 protected:
