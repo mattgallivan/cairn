@@ -12,7 +12,8 @@ void Time::get_current_time(Buffer& buffer) {
   gettimeofday(&tv, NULL);
   struct tm* ptm = localtime(&tv.tv_sec);
 
-  if (buffer.size > 26) {
+  I8 max_str_length = 9;
+  if (buffer.size >= max_str_length) {
     buffer.length = strftime(reinterpret_cast<Char*>(buffer.data), buffer.size,
                              "%H:%M:%S", ptm);
     if (buffer.length > 0 && buffer.length < buffer.size) {
