@@ -26,7 +26,7 @@ protected:
 
 private:
   Display* display;
-  int screen;
+  I32 screen;
   Window root;
   Window window;
 };
