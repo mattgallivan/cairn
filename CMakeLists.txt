@@ -23,4 +23,4 @@ target_include_directories(engine PUBLIC
 
 add_subdirectory(samples)
 enable_testing()
-add_subdirectory(test)
+add_subdirectory(tests)
