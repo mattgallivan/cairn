@@ -1,5 +1,5 @@
-#ifndef TIME_H
-#define TIME_H
+#ifndef TTIME_H
+#define TTIME_H
 
 #include "buffer.h"
 
@@ -13,4 +13,4 @@ public:
 
 } // namespace Cairn
 
-#endif // TIME_H
+#endif // TTIME_H
