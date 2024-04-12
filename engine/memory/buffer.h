@@ -12,8 +12,9 @@ public:
   Buffer(const Buffer& other) = default;
   Buffer& operator=(const Buffer& other) = default;
 
-  Byte* data;
-  Size size;
+  Byte* data = nullptr;
+  Size size = 0;
+  Size length = 0;
 };
 
 } // namespace Cairn

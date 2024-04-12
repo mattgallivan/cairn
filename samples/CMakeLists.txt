@@ -5,5 +5,8 @@ project(CairnSamples)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+add_executable(time_sample time.cpp)
+target_link_libraries(time_sample engine)
+
 add_executable(window_sample window.cpp)
 target_link_libraries(window_sample engine)
