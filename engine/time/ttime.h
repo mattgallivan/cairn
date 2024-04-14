@@ -9,6 +9,8 @@ class Time {
 
 public:
   static void get_current_time(Buffer& buffer);
+
+  static constexpr Size TIME_BUFFER_SIZE = 9;
 };
 
 } // namespace Cairn
