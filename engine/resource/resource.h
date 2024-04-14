@@ -4,7 +4,7 @@
 
 #include <string>
 
-/** Base class for all resources that can be loaded by the engine.
+/** Base class for all resources that can be used by the engine.
  *  Resources are identified by their ID, which is unique for each resource.
  *  The ID is generated automatically when the resource is created.
  */
