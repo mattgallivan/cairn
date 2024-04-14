@@ -19,6 +19,7 @@ add_library(engine ${ENGINE_SOURCES})
 target_link_libraries(engine ${X11_LIBRARIES})
 
 target_include_directories(engine PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}/engine/io
   ${CMAKE_CURRENT_SOURCE_DIR}/engine/log
   ${CMAKE_CURRENT_SOURCE_DIR}/engine/memory
   ${CMAKE_CURRENT_SOURCE_DIR}/engine/resource
