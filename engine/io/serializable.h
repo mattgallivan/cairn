@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 namespace Cairn {
 
 /** The Serializable class is an interface for objects that can be saved to and loaded from files.

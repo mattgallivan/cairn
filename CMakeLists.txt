@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(ENGINE_SOURCES
+  engine/image/image.cpp
   engine/log/log.cpp
   engine/memory/memory.cpp
   engine/time/ttime.cpp
@@ -18,7 +19,10 @@ add_library(engine ${ENGINE_SOURCES})
 
 target_link_libraries(engine ${X11_LIBRARIES})
 
+include_directories(${PROJECT_SOURCE_DIR}/lib)
+
 target_include_directories(engine PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}/engine/image
   ${CMAKE_CURRENT_SOURCE_DIR}/engine/io
   ${CMAKE_CURRENT_SOURCE_DIR}/engine/log
   ${CMAKE_CURRENT_SOURCE_DIR}/engine/memory
