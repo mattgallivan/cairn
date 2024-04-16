@@ -2,12 +2,14 @@ cmake_minimum_required(VERSION 3.10)
 
 project(Cairn)
 
+find_package(GLEW REQUIRED)
 find_package(X11 REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(ENGINE_SOURCES
+  engine/graphics/shader.cpp
   engine/image/image.cpp
   engine/log/log.cpp
   engine/memory/memory.cpp
@@ -17,11 +19,12 @@ set(ENGINE_SOURCES
 
 add_library(engine ${ENGINE_SOURCES})
 
-target_link_libraries(engine ${X11_LIBRARIES})
+target_link_libraries(engine ${GLEW_LIBRARIES} ${X11_LIBRARIES})
 
 include_directories(${PROJECT_SOURCE_DIR}/lib)
 
 target_include_directories(engine PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}/engine/graphics
   ${CMAKE_CURRENT_SOURCE_DIR}/engine/image
   ${CMAKE_CURRENT_SOURCE_DIR}/engine/io
   ${CMAKE_CURRENT_SOURCE_DIR}/engine/log
