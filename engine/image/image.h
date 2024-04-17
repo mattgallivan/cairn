@@ -10,7 +10,7 @@ namespace Cairn {
 class Image : public Resource {
 
 public:
-  Image(const std::string& file_path) : Resource(file_path), width(0), height(0), num_channels(0), pixels(nullptr) {}
+  Image() : width(0), height(0), num_channels(0), pixels(nullptr) {}
 
   ~Image();
 

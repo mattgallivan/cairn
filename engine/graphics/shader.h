@@ -16,7 +16,6 @@ namespace Cairn {
  */
 class Shader : public Resource {
 public:
-  Shader(std::string file__path) : Resource(file_path), program_id(0) {}
   ~Shader();
 
   /** Save the shader to a file. */

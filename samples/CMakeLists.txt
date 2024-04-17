@@ -8,6 +8,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 add_executable(log_sample log.cpp)
 target_link_libraries(log_sample engine)
 
+add_executable(main_sample main.cpp)
+target_link_libraries(main_sample engine)
+
 add_executable(time_sample time.cpp)
 target_link_libraries(time_sample engine)
 

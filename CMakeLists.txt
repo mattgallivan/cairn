@@ -9,10 +9,12 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(ENGINE_SOURCES
+  engine/graphics/mesh.cpp
   engine/graphics/shader.cpp
   engine/image/image.cpp
   engine/log/log.cpp
   engine/memory/memory.cpp
+  engine/resource/resource.cpp
   engine/time/ttime.cpp
   engine/window/window_x11.cpp
 )
@@ -20,6 +22,7 @@ set(ENGINE_SOURCES
 add_library(engine ${ENGINE_SOURCES})
 
 target_link_libraries(engine ${GLEW_LIBRARIES} ${X11_LIBRARIES})
+target_link_libraries(engine stdc++fs)
 
 include_directories(${PROJECT_SOURCE_DIR}/lib)
 
