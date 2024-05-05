@@ -1,16 +1,15 @@
-#include "mesh.h"
-
-#include <iostream>
+#include "window.h"
 
 int main() {
-  std::string file_path = "../resources/meshes/square.mesh";
-  Cairn::Mesh mesh;
-  mesh.load(file_path);
-  std::cout << "Mesh loaded from " << file_path << std::endl;
-  std::cout << "Vertices: " << mesh.vertices.size() << std::endl;
-  std::cout << "Indices: " << mesh.indices.size() << std::endl;
-  std::cout << "Normals: " << mesh.normals.size() << std::endl;
-  std::cout << "TexCoords: " << mesh.texture_coordinates.size() << std::endl;
-  std::cout << "Colors: " << mesh.colors.size() << std::endl;
+  Cairn::Window window(800, 600, "Cairn Engine v0.1");
+  // window.hide();
+  // window.show();
+  // window.maximize();
+  // window.minimize();
+  // window.set_cursor_visible(false);
+  // window.set_fullscreen(true);
+  while (window.is_open()) {
+    window.refresh();
+  }
   return 0;
 }

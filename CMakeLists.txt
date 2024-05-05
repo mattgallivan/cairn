@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 project(Cairn)
 
 find_package(GLEW REQUIRED)
+find_package(glfw3 REQUIRED)
 find_package(X11 REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -16,12 +17,14 @@ set(ENGINE_SOURCES
   engine/memory/memory.cpp
   engine/resource/resource.cpp
   engine/time/ttime.cpp
-  engine/window/window_x11.cpp
+  engine/window/window.cpp
 )
 
 add_library(engine ${ENGINE_SOURCES})
 
-target_link_libraries(engine ${GLEW_LIBRARIES} ${X11_LIBRARIES})
+target_link_libraries(engine ${GLEW_LIBRARIES})
+target_link_libraries(engine glfw)
+target_link_libraries(engine ${X11_LIBRARIES})
 target_link_libraries(engine stdc++fs)
 
 include_directories(${PROJECT_SOURCE_DIR}/lib)
