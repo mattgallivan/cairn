@@ -4,7 +4,7 @@
 
 namespace Cairn {
 
-/** A window that for displaying graphics and polling for input. */
+/** A window for displaying graphics and polling for input. */
 class Window {
 
 public:
