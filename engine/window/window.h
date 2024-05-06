@@ -1,5 +1,6 @@
 #pragma once
 
+#include <GL/glew.h> // This is included before GLFW to avoid a compile error.
 #include <GLFW/glfw3.h>
 
 namespace Cairn {
@@ -12,9 +13,13 @@ public:
 
   ~Window();
 
-  Window(const Window& other) = delete;
+  Window(const Window&) = delete;
+  Window& operator=(const Window&) = delete;
+  Window(Window&&) = delete;
+  Window& operator=(Window&&) = delete;
 
-  Window& operator=(const Window& other) = delete;
+  /** Get the GLFW window. */
+  GLFWwindow* get_glfw_window() const;
 
   /** Returns true if the window is open, false otherwise. */
   bool is_open() const;

@@ -4,14 +4,17 @@ project(Cairn)
 
 find_package(GLEW REQUIRED)
 find_package(glfw3 REQUIRED)
+find_package(OpenGL REQUIRED)
 find_package(X11 REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(ENGINE_SOURCES
+  engine/graphics/graphics.cpp
   engine/graphics/mesh.cpp
   engine/graphics/shader.cpp
+  engine/graphics/sprite.cpp
   engine/image/image.cpp
   engine/log/log.cpp
   engine/memory/memory.cpp
@@ -24,6 +27,7 @@ add_library(engine ${ENGINE_SOURCES})
 
 target_link_libraries(engine ${GLEW_LIBRARIES})
 target_link_libraries(engine glfw)
+target_link_libraries(engine OpenGL::GL)
 target_link_libraries(engine ${X11_LIBRARIES})
 target_link_libraries(engine stdc++fs)
 

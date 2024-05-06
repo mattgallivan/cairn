@@ -27,6 +27,8 @@ Window::~Window() {
   glfwTerminate();
 }
 
+GLFWwindow* Window::get_glfw_window() const { return window; }
+
 bool Window::is_open() const { return !glfwWindowShouldClose(window); }
 
 void Window::hide() { glfwHideWindow(window); }

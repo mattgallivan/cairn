@@ -1,3 +1,3 @@
-#include "shader.h"
+#include "sprite.h"
 
 namespace Cairn {} // namespace Cairn
