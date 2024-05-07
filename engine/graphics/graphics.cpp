@@ -26,25 +26,46 @@ bool Graphics::build(Mesh& mesh) {
 
   GLfloat vertices[] = {
       // First triangle
-      0.5f, 0.5f, 0.0f,  // Top Right
-      0.5f, -0.5f, 0.0f, // Bottom Right
-      -0.5f, 0.5f, 0.0f, // Top Left
+      0.5f, 0.5f, 0.0f, 1.0f, 1.0f,  // Top Right
+      0.5f, -0.5f, 0.0f, 1.0f, 0.0f, // Bottom Right
+      -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, // Top Left
 
       // Second triangle
-      0.5f, -0.5f, 0.0f,  // Bottom Right
-      -0.5f, -0.5f, 0.0f, // Bottom Left
-      -0.5f, 0.5f, 0.0f   // Top Left
+      0.5f, -0.5f, 0.0f, 1.0f, 0.0f,  // Bottom Right
+      -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // Bottom Left
+      -0.5f, 0.5f, 0.0f, 0.0f, 1.0f   // Top Left
   };
 
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
   glEnableVertexAttribArray(0);
+
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+  glEnableVertexAttribArray(1);
 
   glBindVertexArray(0);
 
   meshes[mesh.get_id()] = vao;
 
+  return true;
+}
+
+bool Graphics::build(Texture& texture) {
+  GLuint texture_id;
+  glGenTextures(1, &texture_id);
+  glBindTexture(GL_TEXTURE_2D, texture_id);
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture.width, texture.height, 0, GL_RGB, GL_UNSIGNED_BYTE, texture.data);
+  textures[texture.id] = texture_id;
+
+  glBindTexture(GL_TEXTURE_2D, 0);
   return true;
 }
 
@@ -106,11 +127,16 @@ void Graphics::draw(Shader& shader, Sprite& sprite) {
   glUseProgram(programs[shader.id]);
   glBindVertexArray(meshes[sprite.mesh.get_id()]);
 
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, textures[sprite.texture.id]);
+  glUniform1i(glGetUniformLocation(programs[shader.id], "tex"), 0);
+
   GLuint uniform_model = glGetUniformLocation(programs[shader.id], "model");
   glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(sprite.transform));
 
   glDrawArrays(GL_TRIANGLES, 0, 6);
   glBindVertexArray(0);
+  glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 } // namespace Cairn
