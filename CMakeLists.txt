@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.10)
 
 project(Cairn)
 
+cmake_policy(SET CMP0072 NEW)
+set(OpenGL_GL_PREFERENCE GLVND)
+
 find_package(GLEW REQUIRED)
 find_package(glfw3 REQUIRED)
 find_package(OpenGL REQUIRED)

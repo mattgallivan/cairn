@@ -3,6 +3,7 @@
 #include "log.h"
 
 #include <GL/glew.h>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace Cairn {
 
@@ -104,6 +105,10 @@ bool Graphics::compile(Shader& shader) {
 void Graphics::draw(Shader& shader, Sprite& sprite) {
   glUseProgram(programs[shader.id]);
   glBindVertexArray(meshes[sprite.mesh.get_id()]);
+
+  GLuint uniform_model = glGetUniformLocation(programs[shader.id], "model");
+  glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(sprite.transform));
+
   glDrawArrays(GL_TRIANGLES, 0, 6);
   glBindVertexArray(0);
 }
