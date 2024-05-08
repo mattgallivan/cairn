@@ -9,6 +9,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <stb/stb_image.h>
+
 #include <functional>
 
 int main() {
@@ -35,7 +37,7 @@ int main() {
                                        "uniform sampler2D tex;\n"
                                        "void main()\n"
                                        "{\n"
-                                       "   color = texture(tex, vec2(0.0, 0.0));\n"
+                                       "   color = texture(tex, TexCoords);\n"
                                        "}\0";
 
   Cairn::Shader shader(vertex_shader_source, fragment_shader_source);
@@ -53,22 +55,25 @@ int main() {
   Cairn::Mesh mesh;
   graphics.build(mesh);
 
-  // Build the texture.
-  unsigned char data[32 * 64 * 3];
-  for (int i = 0; i < 32 * 64 * 3; i++) {
-    data[i] = 255;
+  // Load and build the texture.
+  int width, height, channels;
+  unsigned char* image_data = stbi_load("../resources/sprites/toast.png", &width, &height, &channels, 0);
+  if (!image_data) {
+    Cairn::Log::error(Cairn::Log::Category::Graphics, "Failed to load image data.");
+    return 1;
   }
-  Cairn::Texture texture(data, 32, 64, 3);
+
+  Cairn::Texture texture(image_data, width, height, channels);
   graphics.build(texture);
 
   // Create the sprites.
   Cairn::Sprite sprite1(mesh, texture);
   sprite1.position = glm::vec2(200.f, 400.f);
-  sprite1.scale = glm::vec2(32.f, 64.f);
+  sprite1.scale = glm::vec2(96.f, 96.f);
 
   Cairn::Sprite sprite2(mesh, texture);
   sprite2.position = glm::vec2(700.f, 200.f);
-  sprite2.scale = glm::vec2(32.f, 64.f);
+  sprite2.scale = glm::vec2(96.f, 96.f);
 
   // Draw the sprite.
   while (window.is_open()) {
@@ -80,5 +85,7 @@ int main() {
 
     window.refresh();
   }
+
+  stbi_image_free(image_data);
   return 0;
 }

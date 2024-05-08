@@ -13,6 +13,9 @@ Graphics::Graphics(Window& window) {
   if (glewInit() != GLEW_OK) {
     Log::error(Log::Category::Graphics, "Failed to initialize GLEW");
   }
+
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 bool Graphics::build(Mesh& mesh) {
@@ -62,7 +65,8 @@ bool Graphics::build(Texture& texture) {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture.width, texture.height, 0, GL_RGB, GL_UNSIGNED_BYTE, texture.data);
+  GLenum format = texture.num_channels == 4 ? GL_RGBA : GL_RGB;
+  glTexImage2D(GL_TEXTURE_2D, 0, format, texture.width, texture.height, 0, format, GL_UNSIGNED_BYTE, texture.data);
   textures[texture.id] = texture_id;
 
   glBindTexture(GL_TEXTURE_2D, 0);
