@@ -9,6 +9,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <functional>
+
 int main() {
   // Create the window and graphics system.
   Cairn::Window window(800, 600, "Cairn Engine v0.1");
@@ -20,9 +22,10 @@ int main() {
                                      "layout (location = 1) in vec2 tex_coords;\n"
                                      "out vec2 TexCoords;\n"
                                      "uniform mat4 model;\n"
+                                     "uniform mat4 projection;\n"
                                      "void main()\n"
                                      "{\n"
-                                     "   gl_Position = model * vec4(position, 1.0);\n"
+                                     "   gl_Position = projection * model * vec4(position, 1.0);\n"
                                      "   TexCoords = tex_coords;\n"
                                      "}\0";
 
@@ -40,6 +43,12 @@ int main() {
     return 1;
   }
 
+  // Create the camera.
+  Cairn::Camera camera;
+  window.add_resize_callback([&camera](int width, int height) {
+    camera.projection = glm::ortho(0.f, static_cast<float>(width), static_cast<float>(height), 0.f, -1.f, 1.f);
+  });
+
   // Build the mesh.
   Cairn::Mesh mesh;
   graphics.build(mesh);
@@ -53,22 +62,21 @@ int main() {
   graphics.build(texture);
 
   // Create the sprites.
-  const glm::mat4 transform1 =
-      glm::translate(glm::scale(glm::mat4(1.0f), glm::vec3(0.1f)), glm::vec3(0.5f, 0.5f, 0.0f));
-  Cairn::Sprite sprite1(mesh, texture, transform1);
+  Cairn::Sprite sprite1(mesh, texture);
+  sprite1.position = glm::vec2(200.f, 400.f);
+  sprite1.scale = glm::vec2(32.f, 64.f);
 
-  const glm::mat4 transform2 =
-      glm::rotate(glm::translate(glm::scale(glm::mat4(1.0f), glm::vec3(0.1f)), glm::vec3(-0.5f, -0.5f, 0.0f)),
-                  glm::radians(145.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-  Cairn::Sprite sprite2(mesh, texture, transform2);
+  Cairn::Sprite sprite2(mesh, texture);
+  sprite2.position = glm::vec2(700.f, 200.f);
+  sprite2.scale = glm::vec2(32.f, 64.f);
 
   // Draw the sprite.
   while (window.is_open()) {
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    graphics.draw(shader, sprite1);
-    graphics.draw(shader, sprite2);
+    graphics.draw(shader, camera, sprite1);
+    graphics.draw(shader, camera, sprite2);
 
     window.refresh();
   }

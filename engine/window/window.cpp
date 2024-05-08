@@ -2,6 +2,8 @@
 
 #include "log.h"
 
+#include <iostream>
+
 namespace Cairn {
 
 Window::Window(int width, int height, const char* title) {
@@ -20,6 +22,9 @@ Window::Window(int width, int height, const char* title) {
     glfwTerminate();
     exit(1);
   }
+
+  glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+  glfwSetWindowUserPointer(window, this);
 }
 
 Window::~Window() {
@@ -30,6 +35,8 @@ Window::~Window() {
 GLFWwindow* Window::get_glfw_window() const { return window; }
 
 bool Window::is_open() const { return !glfwWindowShouldClose(window); }
+
+void Window::add_resize_callback(std::function<void(int, int)> callback) { resize_callbacks.push_back(callback); }
 
 void Window::hide() { glfwHideWindow(window); }
 
@@ -58,5 +65,17 @@ void Window::set_fullscreen(bool is_fullscreen) {
 }
 
 void Window::show() { glfwShowWindow(window); }
+
+void Window::framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+  glViewport(0, 0, width, height);
+
+  // Trigger all the resize callbacks.
+  auto win = static_cast<Window*>(glfwGetWindowUserPointer(window));
+  if (win) {
+    for (auto& callback : win->resize_callbacks) {
+      callback(width, height);
+    }
+  }
+}
 
 } // namespace Cairn

@@ -3,6 +3,8 @@
 #include <GL/glew.h> // This is included before GLFW to avoid a compile error.
 #include <GLFW/glfw3.h>
 
+#include <functional>
+
 namespace Cairn {
 
 /** A window for displaying graphics and polling for input. */
@@ -23,6 +25,9 @@ public:
 
   /** Returns true if the window is open, false otherwise. */
   bool is_open() const;
+
+  /** Add a callback for when the window is resized. */
+  void add_resize_callback(std::function<void(int, int)> callback);
 
   /** Hide the window. */
   void hide();
@@ -61,6 +66,12 @@ public:
   const char* title;
 
 private:
+  /** Callback for when the window's framebuffer size changes (i.e., the window is resized). */
+  static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+
+  /** Callbacks for when the window is resized. */
+  std::vector<std::function<void(int, int)>> resize_callbacks;
+
   /** The underlying GLFW window. */
   GLFWwindow* window;
 };

@@ -123,7 +123,7 @@ bool Graphics::compile(Shader& shader) {
   return true;
 }
 
-void Graphics::draw(Shader& shader, Sprite& sprite) {
+void Graphics::draw(Shader& shader, Camera& camera, Sprite& sprite) {
   glUseProgram(programs[shader.id]);
   glBindVertexArray(meshes[sprite.mesh.get_id()]);
 
@@ -132,7 +132,10 @@ void Graphics::draw(Shader& shader, Sprite& sprite) {
   glUniform1i(glGetUniformLocation(programs[shader.id], "tex"), 0);
 
   GLuint uniform_model = glGetUniformLocation(programs[shader.id], "model");
-  glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(sprite.transform));
+  glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(sprite.get_model_matrix()));
+
+  GLuint uniform_projection = glGetUniformLocation(programs[shader.id], "projection");
+  glUniformMatrix4fv(uniform_projection, 1, GL_FALSE, glm::value_ptr(camera.projection));
 
   glDrawArrays(GL_TRIANGLES, 0, 6);
   glBindVertexArray(0);

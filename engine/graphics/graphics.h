@@ -1,5 +1,6 @@
 #pragma once
 
+#include "camera.h"
 #include "shader.h"
 #include "sprite.h"
 #include "texture.h"
@@ -20,7 +21,7 @@ public:
 
   bool compile(Shader& shader);
 
-  void draw(Shader& shader, Sprite& sprite);
+  void draw(Shader& shader, Camera& camera, Sprite& sprite);
 
 private:
   std::unordered_map<std::string, GLuint> meshes;
