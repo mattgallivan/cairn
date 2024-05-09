@@ -56,7 +56,7 @@ int main() {
   Cairn::Mesh mesh;
   graphics.build(mesh);
 
-  // Load and build the texture.
+  // Load and build the textures.
   int width, height, channels;
   unsigned char* image_data = stbi_load("../resources/sprites/toast.png", &width, &height, &channels, 0);
   if (!image_data) {
@@ -67,8 +67,17 @@ int main() {
   Cairn::Texture texture(image_data, width, height, channels);
   graphics.build(texture);
 
+  unsigned char* grass_image_data = stbi_load("../resources/sprites/grass.png", &width, &height, &channels, 0);
+  if (!grass_image_data) {
+    Cairn::Log::error(Cairn::Log::Category::Graphics, "Failed to load image data.");
+    return 1;
+  }
+
+  Cairn::Texture grass_texture(grass_image_data, width, height, channels);
+  graphics.build(grass_texture);
+
   // Create the tilemap.
-  Cairn::Sprite tile(&mesh, &texture);
+  Cairn::Sprite tile(&mesh, &grass_texture);
   tile.layer = Cairn::SpriteLayer::Background;
   Cairn::Tilemap tilemap(100, 100, 96, 96, &tile);
 
@@ -90,11 +99,12 @@ int main() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     graphics.draw(shader, camera, tilemap);
-    // graphics.draw(shader, camera, sprites);
+    graphics.draw(shader, camera, sprites);
 
     window.refresh();
   }
 
+  stbi_image_free(grass_image_data);
   stbi_image_free(image_data);
   return 0;
 }
