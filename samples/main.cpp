@@ -67,21 +67,22 @@ int main() {
   graphics.build(texture);
 
   // Create the sprites.
-  Cairn::Sprite sprite1(mesh, texture);
-  sprite1.position = glm::vec2(200.f, 400.f);
-  sprite1.scale = glm::vec2(96.f, 96.f);
-
-  Cairn::Sprite sprite2(mesh, texture);
-  sprite2.position = glm::vec2(700.f, 200.f);
-  sprite2.scale = glm::vec2(96.f, 96.f);
+  std::vector<Cairn::Sprite> sprites;
+  for (int i = 0; i < 10; ++i) {
+    for (int j = 0; j < 10; ++j) {
+      Cairn::Sprite sprite(mesh, texture);
+      sprite.position = glm::vec2(100.f + i * 100.f, 100.f + j * 100.f);
+      sprite.scale = glm::vec2(96.f, 96.f);
+      sprites.push_back(sprite);
+    }
+  }
 
   // Draw the sprite.
   while (window.is_open()) {
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    graphics.draw(shader, camera, sprite1);
-    graphics.draw(shader, camera, sprite2);
+    graphics.draw(shader, camera, sprites);
 
     window.refresh();
   }

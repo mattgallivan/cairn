@@ -21,7 +21,7 @@ public:
 
   bool compile(Shader& shader);
 
-  void draw(Shader& shader, Camera& camera, Sprite& sprite);
+  void draw(Shader& shader, Camera& camera, const std::vector<Sprite>& sprites);
 
 private:
   std::unordered_map<std::string, GLuint> meshes;

@@ -127,23 +127,27 @@ bool Graphics::compile(Shader& shader) {
   return true;
 }
 
-void Graphics::draw(Shader& shader, Camera& camera, Sprite& sprite) {
+void Graphics::draw(Shader& shader, Camera& camera, const std::vector<Sprite>& sprites) {
   glUseProgram(programs[shader.id]);
-  glBindVertexArray(meshes[sprite.mesh.get_id()]);
-
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, textures[sprite.texture.id]);
-  glUniform1i(glGetUniformLocation(programs[shader.id], "tex"), 0);
-
-  GLuint uniform_model = glGetUniformLocation(programs[shader.id], "model");
-  glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(sprite.get_model_matrix()));
 
   GLuint uniform_projection = glGetUniformLocation(programs[shader.id], "projection");
   glUniformMatrix4fv(uniform_projection, 1, GL_FALSE, glm::value_ptr(camera.projection));
 
-  glDrawArrays(GL_TRIANGLES, 0, 6);
-  glBindVertexArray(0);
-  glBindTexture(GL_TEXTURE_2D, 0);
+  for (auto& sprite : sprites) {
+    glBindVertexArray(meshes[sprite.mesh.get_id()]);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, textures[sprite.texture.id]);
+    glUniform1i(glGetUniformLocation(programs[shader.id], "tex"), 0);
+
+    GLuint uniform_model = glGetUniformLocation(programs[shader.id], "model");
+    glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(sprite.get_model_matrix()));
+
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindVertexArray(0);
+  }
 }
 
 } // namespace Cairn
