@@ -4,6 +4,7 @@
 #include "shader.h"
 #include "sprite.h"
 #include "texture.h"
+#include "tilemap.h"
 #include "window.h"
 
 #include <glm/glm.hpp>
@@ -66,6 +67,11 @@ int main() {
   Cairn::Texture texture(image_data, width, height, channels);
   graphics.build(texture);
 
+  // Create the tilemap.
+  Cairn::Sprite tile(&mesh, &texture);
+  tile.layer = Cairn::SpriteLayer::Background;
+  Cairn::Tilemap tilemap(100, 100, 96, 96, &tile);
+
   // Create the sprites.
   std::vector<Cairn::Sprite> sprites;
   for (int i = 0; i < 10; ++i) {
@@ -83,7 +89,8 @@ int main() {
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    graphics.draw(shader, camera, sprites);
+    graphics.draw(shader, camera, tilemap);
+    // graphics.draw(shader, camera, sprites);
 
     window.refresh();
   }

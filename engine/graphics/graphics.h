@@ -4,6 +4,7 @@
 #include "shader.h"
 #include "sprite.h"
 #include "texture.h"
+#include "tilemap.h"
 #include "window.h"
 
 #include <unordered_map>
@@ -22,6 +23,8 @@ public:
   bool compile(Shader& shader);
 
   void draw(Shader& shader, Camera& camera, std::vector<Sprite>& sprites);
+
+  void draw(Shader& shader, Camera& camera, Tilemap& tilemap);
 
 private:
   std::unordered_map<std::string, GLuint> meshes;
