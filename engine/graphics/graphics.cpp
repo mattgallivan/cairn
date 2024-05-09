@@ -5,6 +5,8 @@
 #include <GL/glew.h>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <algorithm>
+
 namespace Cairn {
 
 Graphics::Graphics(Window& window) {
@@ -127,17 +129,21 @@ bool Graphics::compile(Shader& shader) {
   return true;
 }
 
-void Graphics::draw(Shader& shader, Camera& camera, const std::vector<Sprite>& sprites) {
+void Graphics::draw(Shader& shader, Camera& camera, std::vector<Sprite>& sprites) {
   glUseProgram(programs[shader.id]);
+
+  std::stable_sort(sprites.begin(), sprites.end(), [](const Cairn::Sprite& a, const Cairn::Sprite& b) {
+    return static_cast<int>(a.layer) < static_cast<int>(b.layer);
+  });
 
   GLuint uniform_projection = glGetUniformLocation(programs[shader.id], "projection");
   glUniformMatrix4fv(uniform_projection, 1, GL_FALSE, glm::value_ptr(camera.projection));
 
   for (auto& sprite : sprites) {
-    glBindVertexArray(meshes[sprite.mesh.get_id()]);
+    glBindVertexArray(meshes[sprite.mesh->get_id()]);
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, textures[sprite.texture.id]);
+    glBindTexture(GL_TEXTURE_2D, textures[sprite.texture->id]);
     glUniform1i(glGetUniformLocation(programs[shader.id], "tex"), 0);
 
     GLuint uniform_model = glGetUniformLocation(programs[shader.id], "model");

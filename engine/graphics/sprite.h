@@ -7,16 +7,23 @@
 
 namespace Cairn {
 
+enum class SpriteLayer {
+  Background,
+  Foreground,
+};
+
 class Sprite {
 
 public:
-  Sprite(Mesh& mesh, Texture& texture) : mesh(mesh), texture(texture) {}
+  Sprite(Mesh* mesh, Texture* texture) : mesh(mesh), texture(texture) {}
 
   glm::mat4 get_model_matrix() const;
 
-  Mesh& mesh;
+  SpriteLayer layer = SpriteLayer::Foreground;
 
-  Texture& texture;
+  Mesh* mesh;
+
+  Texture* texture;
 
   glm::vec2 position = glm::vec2(0.0f, 0.0f);
 

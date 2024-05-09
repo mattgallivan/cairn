@@ -70,9 +70,10 @@ int main() {
   std::vector<Cairn::Sprite> sprites;
   for (int i = 0; i < 10; ++i) {
     for (int j = 0; j < 10; ++j) {
-      Cairn::Sprite sprite(mesh, texture);
-      sprite.position = glm::vec2(100.f + i * 100.f, 100.f + j * 100.f);
+      Cairn::Sprite sprite(&mesh, &texture);
+      sprite.position = glm::vec2(100.f + i * 30.f, 100.f + j * 30.f);
       sprite.scale = glm::vec2(96.f, 96.f);
+      sprite.layer = (i + j) % 2 == 0 ? Cairn::SpriteLayer::Background : Cairn::SpriteLayer::Foreground;
       sprites.push_back(sprite);
     }
   }
