@@ -162,27 +162,27 @@ void Graphics::draw(Shader& shader, Camera& camera, Tilemap& tilemap) {
   GLuint uniform_projection = glGetUniformLocation(programs[shader.id], "projection");
   glUniformMatrix4fv(uniform_projection, 1, GL_FALSE, glm::value_ptr(camera.projection));
 
-  glBindVertexArray(meshes[tilemap.sprite->mesh->get_id()]);
-
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, textures[tilemap.sprite->texture->id]);
-  glUniform1i(glGetUniformLocation(programs[shader.id], "tex"), 0);
-
   GLuint uniform_model = glGetUniformLocation(programs[shader.id], "model");
 
   for (int y = 0; y < tilemap.height; y++) {
     for (int x = 0; x < tilemap.width; x++) {
+      auto sprite = tilemap.get_sprite(x, y);
+      glBindVertexArray(meshes[sprite.mesh->get_id()]);
+      glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D, textures[sprite.texture->id]);
+      glUniform1i(glGetUniformLocation(programs[shader.id], "tex"), 0);
+
       glm::mat4 model =
           glm::translate(glm::mat4(1.0f), glm::vec3(x * tilemap.tile_width, y * tilemap.tile_height, 0.0f));
       model = glm::scale(model, glm::vec3(tilemap.tile_width, tilemap.tile_height, 1.0f));
       glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(model));
 
       glDrawArrays(GL_TRIANGLES, 0, 6);
+
+      glBindTexture(GL_TEXTURE_2D, 0);
+      glBindVertexArray(0);
     }
   }
-
-  glBindTexture(GL_TEXTURE_2D, 0);
-  glBindVertexArray(0);
 }
 
 } // namespace Cairn

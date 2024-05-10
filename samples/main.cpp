@@ -76,22 +76,42 @@ int main() {
   Cairn::Texture grass_texture(grass_image_data, width, height, channels);
   graphics.build(grass_texture);
 
+  unsigned char* sand_image_data = stbi_load("../resources/sprites/sand.png", &width, &height, &channels, 0);
+  if (!sand_image_data) {
+    Cairn::Log::error(Cairn::Log::Category::Graphics, "Failed to load image data.");
+    return 1;
+  }
+
+  Cairn::Texture sand_texture(sand_image_data, width, height, channels);
+  graphics.build(sand_texture);
+
+  unsigned char* sand2_image_data = stbi_load("../resources/sprites/sand2.png", &width, &height, &channels, 0);
+  if (!sand2_image_data) {
+    Cairn::Log::error(Cairn::Log::Category::Graphics, "Failed to load image data.");
+    return 1;
+  }
+
+  Cairn::Texture sand2_texture(sand2_image_data, width, height, channels);
+  graphics.build(sand2_texture);
+
   // Create the tilemap.
-  Cairn::Sprite tile(&mesh, &grass_texture);
-  tile.layer = Cairn::SpriteLayer::Background;
-  Cairn::Tilemap tilemap(100, 100, 96, 96, &tile);
+  std::vector<Cairn::Sprite> tilemap_sprites;
+  tilemap_sprites.push_back(Cairn::Sprite(&mesh, &sand_texture));
+  tilemap_sprites.push_back(Cairn::Sprite(&mesh, &sand2_texture));
+
+  std::vector<int> tilemap_data = {
+      0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0,
+      1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1,
+      0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
+  };
+  Cairn::Tilemap tilemap(10, 10, 96, 96, tilemap_sprites, tilemap_data);
 
   // Create the sprites.
   std::vector<Cairn::Sprite> sprites;
-  for (int i = 0; i < 10; ++i) {
-    for (int j = 0; j < 10; ++j) {
-      Cairn::Sprite sprite(&mesh, &texture);
-      sprite.position = glm::vec2(100.f + i * 30.f, 100.f + j * 30.f);
-      sprite.scale = glm::vec2(96.f, 96.f);
-      sprite.layer = (i + j) % 2 == 0 ? Cairn::SpriteLayer::Background : Cairn::SpriteLayer::Foreground;
-      sprites.push_back(sprite);
-    }
-  }
+  Cairn::Sprite player_sprite(&mesh, &texture);
+  player_sprite.position = glm::vec2(240.f, 200.f);
+  player_sprite.scale = glm::vec2(96.f, 96.f);
+  sprites.push_back(player_sprite);
 
   // Draw the sprite.
   while (window.is_open()) {
