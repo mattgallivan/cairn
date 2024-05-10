@@ -174,6 +174,7 @@ void Graphics::draw(Shader& shader, Camera& camera, Tilemap& tilemap) {
 
       glm::mat4 model =
           glm::translate(glm::mat4(1.0f), glm::vec3(x * tilemap.tile_width, y * tilemap.tile_height, 0.0f));
+      model = glm::translate(model, glm::vec3(tilemap.position, 0.f));
       model = glm::scale(model, glm::vec3(tilemap.tile_width, tilemap.tile_height, 1.0f));
       glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(model));
 

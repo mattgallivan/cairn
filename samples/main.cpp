@@ -106,6 +106,9 @@ int main() {
   };
   Cairn::Tilemap tilemap(10, 10, 96, 96, tilemap_sprites, tilemap_data);
 
+  Cairn::Tilemap tilemap2(10, 10, 96, 96, tilemap_sprites, tilemap_data);
+  tilemap2.position = glm::vec2(1000.f, 500.f);
+
   // Create the sprites.
   std::vector<Cairn::Sprite> sprites;
   Cairn::Sprite player_sprite(&mesh, &texture);
@@ -119,6 +122,7 @@ int main() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     graphics.draw(shader, camera, tilemap);
+    graphics.draw(shader, camera, tilemap2);
     graphics.draw(shader, camera, sprites);
 
     window.refresh();

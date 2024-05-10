@@ -21,6 +21,8 @@ public:
 
   std::vector<Sprite> sprites;
   std::vector<int> data;
+
+  glm::vec2 position = glm::vec2(0.0f, 0.0f);
 };
 
 } // namespace Cairn
