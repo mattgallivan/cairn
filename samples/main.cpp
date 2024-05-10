@@ -1,6 +1,7 @@
 #include "graphics.h"
 #include "log.h"
 #include "mesh.h"
+#include "resource.h"
 #include "shader.h"
 #include "sprite.h"
 #include "texture.h"
@@ -20,26 +21,8 @@ int main() {
   Cairn::Graphics graphics(window);
 
   // Compile the shaders.
-  const char* vertex_shader_source = "#version 330 core\n"
-                                     "layout (location = 0) in vec3 position;\n"
-                                     "layout (location = 1) in vec2 tex_coords;\n"
-                                     "out vec2 TexCoords;\n"
-                                     "uniform mat4 model;\n"
-                                     "uniform mat4 projection;\n"
-                                     "void main()\n"
-                                     "{\n"
-                                     "   gl_Position = projection * model * vec4(position, 1.0);\n"
-                                     "   TexCoords = tex_coords;\n"
-                                     "}\0";
-
-  const char* fragment_shader_source = "#version 330 core\n"
-                                       "in vec2 TexCoords;\n"
-                                       "out vec4 color;\n"
-                                       "uniform sampler2D tex;\n"
-                                       "void main()\n"
-                                       "{\n"
-                                       "   color = texture(tex, TexCoords);\n"
-                                       "}\0";
+  std::string vertex_shader_source = Cairn::Resource::load_shader("../resources/shaders/vertex.glsl");
+  std::string fragment_shader_source = Cairn::Resource::load_shader("../resources/shaders/fragment.glsl");
 
   Cairn::Shader shader(vertex_shader_source, fragment_shader_source);
   if (!graphics.compile(shader)) {

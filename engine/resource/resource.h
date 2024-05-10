@@ -33,6 +33,8 @@ public:
   /** Get the ID of the resource. */
   std::string get_id() { return this->id; }
 
+  static std::string load_shader(const std::string& file_path);
+
 protected:
   static int next_id;
 
