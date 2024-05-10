@@ -1,8 +1,10 @@
 #pragma once
 
 #include "serializable.h"
+#include "texture.h"
 
 #include <iostream>
+#include <memory>
 #include <string>
 
 namespace Cairn {
@@ -24,16 +26,18 @@ public:
 
   Resource() : state(State::Unloaded) { this->id = std::to_string(next_id++); }
 
-  virtual ~Resource() {}
+  virtual bool save(const std::string& file_path) const override { return false; }
 
-  virtual bool save(const std::string& file_path) const = 0;
-
-  virtual bool load(const std::string& file_path) = 0;
+  virtual bool load(const std::string& file_path) override { return false; }
 
   /** Get the ID of the resource. */
   std::string get_id() { return this->id; }
 
   static std::string load_shader(const std::string& file_path);
+
+  Texture* load_texture(const std::string& file_path);
+
+  std::vector<Texture*> textures;
 
 protected:
   static int next_id;

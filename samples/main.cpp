@@ -40,44 +40,23 @@ int main() {
   graphics.build(mesh);
 
   // Load and build the textures.
-  int width, height, channels;
-  unsigned char* image_data = stbi_load("../resources/sprites/toast.png", &width, &height, &channels, 0);
-  if (!image_data) {
-    Cairn::Log::error(Cairn::Log::Category::Graphics, "Failed to load image data.");
-    return 1;
-  }
+  Cairn::Resource resource_manager;
 
-  Cairn::Texture texture(image_data, width, height, channels);
-  graphics.build(texture);
+  Cairn::Texture* texture = resource_manager.load_texture("../resources/sprites/toast.png");
+  graphics.build(*texture);
 
-  unsigned char* grass_image_data = stbi_load("../resources/sprites/grass.png", &width, &height, &channels, 0);
-  if (!grass_image_data) {
-    Cairn::Log::error(Cairn::Log::Category::Graphics, "Failed to load image data.");
-    return 1;
-  }
+  Cairn::Texture* grass_texture = resource_manager.load_texture("../resources/sprites/grass.png");
+  graphics.build(*grass_texture);
 
-  Cairn::Texture grass_texture(grass_image_data, width, height, channels);
-  graphics.build(grass_texture);
+  Cairn::Texture* sand_texture = resource_manager.load_texture("../resources/sprites/sand.png");
+  graphics.build(*sand_texture);
 
-  unsigned char* sand_image_data = stbi_load("../resources/sprites/sand.png", &width, &height, &channels, 0);
-  if (!sand_image_data) {
-    Cairn::Log::error(Cairn::Log::Category::Graphics, "Failed to load image data.");
-    return 1;
-  }
-
-  Cairn::Texture sand_texture(sand_image_data, width, height, channels);
-  graphics.build(sand_texture);
-
-  unsigned char* sand2_image_data = stbi_load("../resources/sprites/sand2.png", &width, &height, &channels, 0);
-  if (!sand2_image_data) {
-    Cairn::Log::error(Cairn::Log::Category::Graphics, "Failed to load image data.");
-    return 1;
-  }
-
-  Cairn::Texture sand2_texture(sand2_image_data, width, height, channels);
-  graphics.build(sand2_texture);
+  Cairn::Texture* sand2_texture = resource_manager.load_texture("../resources/sprites/sand2.png");
+  graphics.build(*sand2_texture);
 
   // Load the texture atlas.
+  int width, height, channels;
+
   unsigned char* atlas_data = stbi_load("../resources/textures/blocks.png", &width, &height, &channels, 0);
   Cairn::TextureAtlas texture_atlas(atlas_data, width, height, channels, 48, 48);
   graphics.build(texture_atlas);
@@ -95,7 +74,7 @@ int main() {
 
   // Create the sprites.
   std::vector<Cairn::Sprite> sprites;
-  Cairn::Sprite player_sprite(&mesh, &texture);
+  Cairn::Sprite player_sprite(&mesh, texture);
   player_sprite.position = glm::vec2(240.f, 200.f);
   player_sprite.scale = glm::vec2(96.f, 96.f);
   sprites.push_back(player_sprite);
@@ -112,10 +91,5 @@ int main() {
     window.refresh();
   }
 
-  stbi_image_free(atlas_data);
-  stbi_image_free(sand2_image_data);
-  stbi_image_free(sand_image_data);
-  stbi_image_free(grass_image_data);
-  stbi_image_free(image_data);
   return 0;
 }
