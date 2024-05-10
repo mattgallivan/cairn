@@ -78,8 +78,8 @@ int main() {
   graphics.build(sand2_texture);
 
   // Load the texture atlas.
-  unsigned char* atlas_data = stbi_load("../resources/textures/spritesheet.png", &width, &height, &channels, 0);
-  Cairn::TextureAtlas texture_atlas(atlas_data, width, height, channels, 96, 96);
+  unsigned char* atlas_data = stbi_load("../resources/textures/blocks.png", &width, &height, &channels, 0);
+  Cairn::TextureAtlas texture_atlas(atlas_data, width, height, channels, 48, 48);
   graphics.build(texture_atlas);
 
   // Create the tilemap.
@@ -88,9 +88,9 @@ int main() {
       1, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 1, 2, 1,
       0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
   };
-  Cairn::Tilemap tilemap(10, 10, 96, 96, &texture_atlas, tilemap_data);
+  Cairn::Tilemap tilemap(10, 10, 48, 48, &texture_atlas, tilemap_data);
 
-  Cairn::Tilemap tilemap2(10, 10, 96, 96, &texture_atlas, tilemap_data);
+  Cairn::Tilemap tilemap2(10, 10, 48, 48, &texture_atlas, tilemap_data);
   tilemap2.position = glm::vec2(1000.f, 500.f);
 
   // Create the sprites.
