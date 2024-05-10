@@ -164,12 +164,60 @@ void Graphics::draw(Shader& shader, Camera& camera, Tilemap& tilemap) {
 
   GLuint uniform_model = glGetUniformLocation(programs[shader.id], "model");
 
+  Mesh mesh;
+  build(mesh);
+
+  glBindVertexArray(meshes[mesh.get_id()]);
+
+  // TODO(matt): I know this is bad.
+  GLuint vbo;
+  glGenBuffers(1, &vbo);
+  glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+  glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 8 * 4, nullptr,
+               GL_DYNAMIC_DRAW); // Allocate buffer for 4 vertices with 8 properties each
+
+  // Position attribute
+  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void*)0);
+  glEnableVertexAttribArray(0);
+
+  // Texture coordinate attribute
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
+  glEnableVertexAttribArray(1);
+
+  int atlas_rows = tilemap.atlas->height / tilemap.atlas->tile_height;
+  int atlas_cols = tilemap.atlas->width / tilemap.atlas->tile_width;
+
   for (int y = 0; y < tilemap.height; y++) {
     for (int x = 0; x < tilemap.width; x++) {
-      auto sprite = tilemap.get_sprite(x, y);
-      glBindVertexArray(meshes[sprite.mesh->get_id()]);
+      int tile_index = tilemap.data[y * tilemap.width + x];
+
+      int atlas_x = tile_index % atlas_cols;
+      int atlas_y = tile_index / atlas_cols;
+
+      float s_min = (float)atlas_x / atlas_cols;
+      float s_max = (float)(atlas_x + 1) / atlas_cols;
+      float t_min = (float)atlas_y / atlas_rows;
+      float t_max = (float)(atlas_y + 1) / atlas_rows;
+
+      GLfloat vertices[] = {
+          // Triangle 1
+          0.0f, 1.0f, s_min, t_max, // Top-left
+          0.0f, 0.0f, s_min, t_min, // Bottom-left
+          1.0f, 1.0f, s_max, t_max, // Top-right
+          // Triangle 2
+          0.0f, 0.0f, s_min, t_min, // Bottom-left
+          1.0f, 0.0f, s_max, t_min, // Bottom-right
+          1.0f, 1.0f, s_max, t_max  // Top-right
+      };
+
+      // Update the vertex buffer here, particularly the texture coordinates
+      glBindBuffer(GL_ARRAY_BUFFER, vbo);
+      glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+      glBindBuffer(GL_ARRAY_BUFFER, 0);
+
       glActiveTexture(GL_TEXTURE0);
-      glBindTexture(GL_TEXTURE_2D, textures[sprite.texture->id]);
+      glBindTexture(GL_TEXTURE_2D, textures[tilemap.atlas->id]);
       glUniform1i(glGetUniformLocation(programs[shader.id], "tex"), 0);
 
       glm::mat4 model =
@@ -181,9 +229,10 @@ void Graphics::draw(Shader& shader, Camera& camera, Tilemap& tilemap) {
       glDrawArrays(GL_TRIANGLES, 0, 6);
 
       glBindTexture(GL_TEXTURE_2D, 0);
-      glBindVertexArray(0);
     }
   }
+
+  glDeleteBuffers(1, &vbo);
 }
 
 } // namespace Cairn
