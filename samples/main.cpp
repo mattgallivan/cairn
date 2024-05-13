@@ -80,6 +80,7 @@ int main() {
   Cairn::Sprite player_sprite(&mesh, texture);
   player_sprite.position = glm::vec2(400.f, 600.f);
   player_sprite.scale = glm::vec2(96.f, 96.f);
+  player_sprite.rotation = 10.f;
   sprites.push_back(player_sprite);
 
   // Draw the sprite.

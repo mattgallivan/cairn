@@ -7,28 +7,38 @@
 
 namespace Cairn {
 
+/** The layer determines the order in which sprites are rendered. */
 enum class SpriteLayer {
   Background,
   Foreground,
 };
 
+/** A sprite is a 2D object that can be rendered to the screen. */
 class Sprite {
 
 public:
-  Sprite(Mesh* mesh, Texture* texture) : mesh(mesh), texture(texture) {}
+  Sprite(Mesh* mesh, Texture* texture, SpriteLayer layer = SpriteLayer::Foreground)
+      : mesh(mesh), texture(texture), layer(layer) {}
 
-  glm::mat4 get_model_matrix() const;
+  /** Get the model matrix for this sprite. */
+  glm::mat4 get_model() const;
 
-  SpriteLayer layer = SpriteLayer::Foreground;
-
+  /** The mesh used to render this sprite. */
   Mesh* mesh;
 
+  /** The texture used to render this sprite. */
   Texture* texture;
 
+  /** The layer determines the order in which sprites are rendered. */
+  SpriteLayer layer;
+
+  /** The position of the sprite. */
   glm::vec2 position = glm::vec2(0.0f, 0.0f);
 
-  glm::vec2 rotation = glm::vec2(0.0f, 0.0f);
+  /** The rotation of the sprite in degrees. */
+  float rotation = 0.f;
 
+  /** The scale of the sprite. */
   glm::vec2 scale = glm::vec2(1.0f, 1.0f);
 };
 

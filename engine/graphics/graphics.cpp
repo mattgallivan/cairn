@@ -147,7 +147,7 @@ void Graphics::draw(Shader& shader, Camera& camera, std::vector<Sprite>& sprites
     glUniform1i(glGetUniformLocation(programs[shader.id], "tex"), 0);
 
     GLuint uniform_model = glGetUniformLocation(programs[shader.id], "model");
-    glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(sprite.get_model_matrix()));
+    glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(sprite.get_model()));
 
     glDrawArrays(GL_TRIANGLES, 0, 6);
 
