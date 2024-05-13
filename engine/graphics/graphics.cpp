@@ -31,14 +31,14 @@ bool Graphics::build(Mesh& mesh) {
 
   GLfloat vertices[] = {
       // First triangle
-      0.5f, 0.5f, 0.0f, 1.0f, 1.0f,  // Top Right
-      0.5f, -0.5f, 0.0f, 1.0f, 0.0f, // Bottom Right
-      -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, // Top Left
+      0.5f, 0.5f, 0.0f, 1.0f, 0.0f,  // Top Right
+      0.5f, -0.5f, 0.0f, 1.0f, 1.0f, // Bottom Right
+      -0.5f, 0.5f, 0.0f, 0.0f, 0.0f, // Top Left
 
       // Second triangle
-      0.5f, -0.5f, 0.0f, 1.0f, 0.0f,  // Bottom Right
-      -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // Bottom Left
-      -0.5f, 0.5f, 0.0f, 0.0f, 1.0f   // Top Left
+      0.5f, -0.5f, 0.0f, 1.0f, 1.0f,  // Bottom Right
+      -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, // Bottom Left
+      -0.5f, 0.5f, 0.0f, 0.0f, 0.0f   // Top Left
   };
 
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -137,7 +137,7 @@ void Graphics::draw(Shader& shader, Camera& camera, std::vector<Sprite>& sprites
   });
 
   GLuint uniform_projection = glGetUniformLocation(programs[shader.id], "projection");
-  glUniformMatrix4fv(uniform_projection, 1, GL_FALSE, glm::value_ptr(camera.projection));
+  glUniformMatrix4fv(uniform_projection, 1, GL_FALSE, glm::value_ptr(camera.get_projection()));
 
   for (auto& sprite : sprites) {
     glBindVertexArray(meshes[sprite.mesh->get_id()]);
@@ -160,7 +160,7 @@ void Graphics::draw(Shader& shader, Camera& camera, Tilemap& tilemap) {
   glUseProgram(programs[shader.id]);
 
   GLuint uniform_projection = glGetUniformLocation(programs[shader.id], "projection");
-  glUniformMatrix4fv(uniform_projection, 1, GL_FALSE, glm::value_ptr(camera.projection));
+  glUniformMatrix4fv(uniform_projection, 1, GL_FALSE, glm::value_ptr(camera.get_projection()));
 
   GLuint uniform_model = glGetUniformLocation(programs[shader.id], "model");
 
@@ -202,13 +202,13 @@ void Graphics::draw(Shader& shader, Camera& camera, Tilemap& tilemap) {
 
       GLfloat vertices[] = {
           // Triangle 1
-          0.0f, 1.0f, s_min, t_max, // Top-left
-          0.0f, 0.0f, s_min, t_min, // Bottom-left
-          1.0f, 1.0f, s_max, t_max, // Top-right
+          0.0f, 1.0f, s_min, t_min, // Top-left
+          0.0f, 0.0f, s_min, t_max, // Bottom-left
+          1.0f, 1.0f, s_max, t_min, // Top-right
           // Triangle 2
-          0.0f, 0.0f, s_min, t_min, // Bottom-left
-          1.0f, 0.0f, s_max, t_min, // Bottom-right
-          1.0f, 1.0f, s_max, t_max  // Top-right
+          0.0f, 0.0f, s_min, t_max, // Bottom-left
+          1.0f, 0.0f, s_max, t_max, // Bottom-right
+          1.0f, 1.0f, s_max, t_min, // Top-right
       };
 
       // Update the vertex buffer here, particularly the texture coordinates

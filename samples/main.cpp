@@ -32,7 +32,10 @@ int main() {
   // Create the camera.
   Cairn::Camera camera;
   window.add_resize_callback([&camera](int width, int height) {
-    camera.projection = glm::ortho(0.f, static_cast<float>(width), static_cast<float>(height), 0.f, -1.f, 1.f);
+    camera.left = 0.f;
+    camera.right = width;
+    camera.top = height;
+    camera.bottom = 0.f;
   });
 
   // Build the mesh.
@@ -75,7 +78,7 @@ int main() {
   // Create the sprites.
   std::vector<Cairn::Sprite> sprites;
   Cairn::Sprite player_sprite(&mesh, texture);
-  player_sprite.position = glm::vec2(240.f, 200.f);
+  player_sprite.position = glm::vec2(400.f, 600.f);
   player_sprite.scale = glm::vec2(96.f, 96.f);
   sprites.push_back(player_sprite);
 
