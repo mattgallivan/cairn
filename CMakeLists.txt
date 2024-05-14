@@ -15,7 +15,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(ENGINE_SOURCES
   engine/graphics/graphics.cpp
-  engine/graphics/mesh.cpp
   engine/graphics/shader.cpp
   engine/graphics/sprite.cpp
   engine/image/image.cpp

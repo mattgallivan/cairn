@@ -51,7 +51,7 @@ bool Graphics::build(Mesh& mesh) {
 
   glBindVertexArray(0);
 
-  meshes[mesh.get_id()] = vao;
+  meshes[mesh.id] = vao;
 
   return true;
 }
@@ -140,7 +140,7 @@ void Graphics::draw(Shader& shader, Camera& camera, std::vector<Sprite>& sprites
   glUniformMatrix4fv(uniform_projection, 1, GL_FALSE, glm::value_ptr(camera.get_projection()));
 
   for (auto& sprite : sprites) {
-    glBindVertexArray(meshes[sprite.mesh->get_id()]);
+    glBindVertexArray(meshes[sprite.mesh->id]);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textures[sprite.texture->id]);
@@ -167,7 +167,7 @@ void Graphics::draw(Shader& shader, Camera& camera, Tilemap& tilemap) {
   Mesh mesh;
   build(mesh);
 
-  glBindVertexArray(meshes[mesh.get_id()]);
+  glBindVertexArray(meshes[mesh.id]);
 
   // TODO(matt): I know this is bad.
   GLuint vbo;
