@@ -4,6 +4,7 @@
 
 namespace Cairn {
 
+/** A texture is a 2D image that can be used to render a sprite. */
 class Texture {
 
 public:
@@ -13,14 +14,23 @@ public:
     id = "Texture_" + std::to_string(counter++);
   }
 
+  /** The image data of the texture. */
   const unsigned char* data;
+
+  /** The height of the texture in pixels. */
   int height;
+
+  /** The width of the texture in pixels. */
   int width;
+
+  /** The number of channels in the texture. */
   int num_channels;
 
+  /** The unique identifier of the texture. */
   std::string id;
 };
 
+/** A texture atlas is a collection of textures that are all stored in a single image. */
 class TextureAtlas : public Texture {
 
 public:
@@ -39,14 +49,23 @@ public:
     }
   }
 
-  // TODO(matt): Add the remaining constructors and destructors.
+  TextureAtlas(const TextureAtlas&) = delete;
 
+  TextureAtlas& operator=(const TextureAtlas&) = delete;
+
+  TextureAtlas(TextureAtlas&&) = delete;
+
+  /** Get the texture at the specified index. */
   Texture* get_texture(int index) { return textures[index]; }
 
+  /** The width of each tile in the texture atlas. */
   int tile_width;
+
+  /** The height of each tile in the texture atlas. */
   int tile_height;
 
 private:
+  /** The textures in the texture atlas. */
   std::vector<Texture*> textures;
 };
 
