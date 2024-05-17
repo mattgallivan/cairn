@@ -17,6 +17,26 @@ public:
   Mesh() {
     static unsigned int counter = 0;
     id = "Mesh_" + std::to_string(counter++);
+
+    vertices = {
+        {0.5f, 0.5f},   // Top Right
+        {0.5f, -0.5f},  // Bottom Right
+        {-0.5f, 0.5f},  // Top Left
+        {0.5f, -0.5f},  // Bottom Right
+        {-0.5f, -0.5f}, // Bottom Left
+        {-0.5f, 0.5f}   // Top Left
+    };
+
+    texture_coordinates = {
+        {1.0f, 0.0f}, // Top Right
+        {1.0f, 1.0f}, // Bottom Right
+        {0.0f, 0.0f}, // Top Left
+        {1.0f, 1.0f}, // Bottom Right
+        {0.0f, 1.0f}, // Bottom Left
+        {0.0f, 0.0f}  // Top Left
+    };
+
+    indices = {0, 1, 2, 3, 4, 5};
   }
 
   /** The vertices of the mesh. */
@@ -27,12 +47,6 @@ public:
 
   /** The texture coordinates of the mesh. */
   std::vector<glm::vec2> texture_coordinates;
-
-  /** The colors of the mesh. */
-  std::vector<glm::vec3> colors;
-
-  /** The normals of the mesh. */
-  std::vector<glm::vec3> normals;
 
   /** The unique identifier of the mesh. */
   std::string id;

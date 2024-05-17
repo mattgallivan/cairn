@@ -6,18 +6,35 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <algorithm>
+#include <string>
 
 namespace Cairn {
 
 Graphics::Graphics(Window& window) {
   glfwMakeContextCurrent(window.get_glfw_window());
   glewExperimental = GL_TRUE;
-  if (glewInit() != GLEW_OK) {
-    Log::error(Log::Category::Graphics, "Failed to initialize GLEW");
+  GLenum err = glewInit();
+  if (err != GLEW_OK) {
+    std::string message = std::string(reinterpret_cast<const char*>(glewGetErrorString(err)));
+    Log::error(Log::Category::Graphics, "Failed to initialize GLEW: " + message);
   }
 
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+}
+
+Graphics::~Graphics() {
+  for (auto& mesh : meshes) {
+    glDeleteVertexArrays(1, &mesh.second);
+  }
+
+  for (auto& texture : textures) {
+    glDeleteTextures(1, &texture.second);
+  }
+
+  for (auto& program : programs) {
+    glDeleteProgram(program.second);
+  }
 }
 
 bool Graphics::build(Mesh& mesh) {
@@ -29,19 +46,17 @@ bool Graphics::build(Mesh& mesh) {
   glGenBuffers(1, &vbo);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-  GLfloat vertices[] = {
-      // First triangle
-      0.5f, 0.5f, 0.0f, 1.0f, 0.0f,  // Top Right
-      0.5f, -0.5f, 0.0f, 1.0f, 1.0f, // Bottom Right
-      -0.5f, 0.5f, 0.0f, 0.0f, 0.0f, // Top Left
+  std::vector<GLfloat> vertices;
+  vertices.reserve(mesh.vertices.size() * 5);
+  for (size_t i = 0; i < mesh.vertices.size(); i++) {
+    vertices.push_back(mesh.vertices[i].x);
+    vertices.push_back(mesh.vertices[i].y);
+    vertices.push_back(0.f);
+    vertices.push_back(mesh.texture_coordinates[i].x);
+    vertices.push_back(mesh.texture_coordinates[i].y);
+  }
 
-      // Second triangle
-      0.5f, -0.5f, 0.0f, 1.0f, 1.0f,  // Bottom Right
-      -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, // Bottom Left
-      -0.5f, 0.5f, 0.0f, 0.0f, 0.0f   // Top Left
-  };
-
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat), vertices.data(), GL_STATIC_DRAW);
 
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
   glEnableVertexAttribArray(0);
@@ -92,6 +107,8 @@ bool Graphics::compile(Shader& shader) {
     glGetShaderInfoLog(vertex_shader, 512, nullptr, info_log);
     Log::error(Log::Category::Graphics, "Failed to compile vertex shader.");
     Log::error(Log::Category::Graphics, info_log);
+    glDeleteShader(vertex_shader);
+    glDeleteShader(fragment_shader);
     return false;
   }
 
@@ -104,6 +121,8 @@ bool Graphics::compile(Shader& shader) {
     glGetShaderInfoLog(fragment_shader, 512, nullptr, info_log);
     Log::error(Log::Category::Graphics, "Failed to compile fragment shader.");
     Log::error(Log::Category::Graphics, info_log);
+    glDeleteShader(vertex_shader);
+    glDeleteShader(fragment_shader);
     return false;
   }
 
@@ -118,6 +137,9 @@ bool Graphics::compile(Shader& shader) {
     glGetProgramInfoLog(program, 512, nullptr, info_log);
     Log::error(Log::Category::Graphics, "Failed to link shader program.");
     Log::error(Log::Category::Graphics, info_log);
+    glDeleteShader(vertex_shader);
+    glDeleteShader(fragment_shader);
+    glDeleteProgram(program);
     return false;
   }
 
@@ -130,6 +152,11 @@ bool Graphics::compile(Shader& shader) {
 }
 
 void Graphics::draw(Shader& shader, Camera& camera, std::vector<Sprite>& sprites) {
+  if (programs.find(shader.id) == programs.end()) {
+    Log::error(Log::Category::Graphics, "Shader program not found.");
+    return;
+  }
+
   glUseProgram(programs[shader.id]);
 
   std::stable_sort(sprites.begin(), sprites.end(), [](const Cairn::Sprite& a, const Cairn::Sprite& b) {
@@ -140,7 +167,17 @@ void Graphics::draw(Shader& shader, Camera& camera, std::vector<Sprite>& sprites
   glUniformMatrix4fv(uniform_projection, 1, GL_FALSE, glm::value_ptr(camera.get_projection()));
 
   for (auto& sprite : sprites) {
+    // If the mesh hasn't been built, build it.
+    if (meshes.find(sprite.mesh->id) == meshes.end()) {
+      build(*sprite.mesh);
+    }
+
     glBindVertexArray(meshes[sprite.mesh->id]);
+
+    // If the texture hasn't been built, build it.
+    if (textures.find(sprite.texture->id) == textures.end()) {
+      build(*sprite.texture);
+    }
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textures[sprite.texture->id]);
@@ -150,13 +187,18 @@ void Graphics::draw(Shader& shader, Camera& camera, std::vector<Sprite>& sprites
     glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(sprite.get_model()));
 
     glDrawArrays(GL_TRIANGLES, 0, 6);
-
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glBindVertexArray(0);
   }
+
+  glBindTexture(GL_TEXTURE_2D, 0);
+  glBindVertexArray(0);
 }
 
 void Graphics::draw(Shader& shader, Camera& camera, Tilemap& tilemap) {
+  if (programs.find(shader.id) == programs.end()) {
+    Log::error(Log::Category::Graphics, "Shader program not found.");
+    return;
+  }
+
   glUseProgram(programs[shader.id]);
 
   GLuint uniform_projection = glGetUniformLocation(programs[shader.id], "projection");
@@ -169,7 +211,6 @@ void Graphics::draw(Shader& shader, Camera& camera, Tilemap& tilemap) {
 
   glBindVertexArray(meshes[mesh.id]);
 
-  // TODO(matt): I know this is bad.
   GLuint vbo;
   glGenBuffers(1, &vbo);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -212,9 +253,12 @@ void Graphics::draw(Shader& shader, Camera& camera, Tilemap& tilemap) {
       };
 
       // Update the vertex buffer here, particularly the texture coordinates
-      glBindBuffer(GL_ARRAY_BUFFER, vbo);
       glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-      glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+      // If the texture hasn't been built, build it.
+      if (textures.find(tilemap.atlas->id) == textures.end()) {
+        build(*tilemap.atlas);
+      }
 
       glActiveTexture(GL_TEXTURE0);
       glBindTexture(GL_TEXTURE_2D, textures[tilemap.atlas->id]);

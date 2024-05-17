@@ -40,29 +40,20 @@ int main() {
 
   // Build the mesh.
   Cairn::Mesh mesh;
-  graphics.build(mesh);
 
   // Load and build the textures.
   Cairn::Resource resource_manager;
 
   Cairn::Texture* texture = resource_manager.load_texture("../resources/sprites/toast.png");
-  graphics.build(*texture);
-
   Cairn::Texture* grass_texture = resource_manager.load_texture("../resources/sprites/grass.png");
-  graphics.build(*grass_texture);
-
   Cairn::Texture* sand_texture = resource_manager.load_texture("../resources/sprites/sand.png");
-  graphics.build(*sand_texture);
-
   Cairn::Texture* sand2_texture = resource_manager.load_texture("../resources/sprites/sand2.png");
-  graphics.build(*sand2_texture);
 
   // Load the texture atlas.
   int width, height, channels;
 
   unsigned char* atlas_data = stbi_load("../resources/textures/blocks.png", &width, &height, &channels, 0);
   Cairn::TextureAtlas texture_atlas(atlas_data, width, height, channels, 48, 48);
-  graphics.build(texture_atlas);
 
   // Create the tilemap.
   std::vector<int> tilemap_data = {
