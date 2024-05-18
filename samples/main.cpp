@@ -1,4 +1,5 @@
 #include "graphics.h"
+#include "input.h"
 #include "log.h"
 #include "mesh.h"
 #include "resource.h"
@@ -19,6 +20,16 @@ int main() {
   // Create the window and graphics system.
   Cairn::Window window(800, 600, "Cairn Engine v0.2.0");
   Cairn::Graphics graphics(window);
+
+  // Register the input with the window.
+  Cairn::Input::Manager input_manager;
+  window.bind(&input_manager);
+
+  Cairn::Input::Profile input_profile;
+  input_profile.set_debug(false);
+  input_profile.bind(Cairn::Input::Key::Esc, Cairn::Input::Action::Press, [&window]() { window.close(); });
+
+  input_manager.add(&input_profile);
 
   // Compile the shaders.
   std::string vertex_shader_source = Cairn::Resource::load_shader("../resources/shaders/vertex.glsl");
@@ -67,12 +78,24 @@ int main() {
   tilemap2.position = glm::vec2(1000.f, 500.f);
 
   // Create the sprites.
-  std::vector<Cairn::Sprite> sprites;
+  std::vector<Cairn::Sprite*> sprites;
   Cairn::Sprite player_sprite(&mesh, texture);
   player_sprite.position = glm::vec2(400.f, 600.f);
   player_sprite.scale = glm::vec2(96.f, 96.f);
   player_sprite.rotation = 10.f;
-  sprites.push_back(player_sprite);
+  sprites.push_back(&player_sprite);
+
+  input_profile.bind(Cairn::Input::Key::W, Cairn::Input::Action::Hold,
+                     [&player_sprite]() { player_sprite.position.y += 5.f; });
+
+  input_profile.bind(Cairn::Input::Key::S, Cairn::Input::Action::Hold,
+                     [&player_sprite]() { player_sprite.position.y -= 5.f; });
+
+  input_profile.bind(Cairn::Input::Key::A, Cairn::Input::Action::Hold,
+                     [&player_sprite]() { player_sprite.position.x -= 5.f; });
+
+  input_profile.bind(Cairn::Input::Key::D, Cairn::Input::Action::Hold,
+                     [&player_sprite]() { player_sprite.position.x += 5.f; });
 
   // Draw the sprite.
   while (window.is_open()) {

@@ -37,6 +37,7 @@ include_directories(${PROJECT_SOURCE_DIR}/lib)
 target_include_directories(engine PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/engine/graphics
   ${CMAKE_CURRENT_SOURCE_DIR}/engine/image
+  ${CMAKE_CURRENT_SOURCE_DIR}/engine/input
   ${CMAKE_CURRENT_SOURCE_DIR}/engine/io
   ${CMAKE_CURRENT_SOURCE_DIR}/engine/log
   ${CMAKE_CURRENT_SOURCE_DIR}/engine/memory

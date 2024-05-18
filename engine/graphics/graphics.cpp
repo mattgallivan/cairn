@@ -151,7 +151,7 @@ bool Graphics::compile(Shader& shader) {
   return true;
 }
 
-void Graphics::draw(Shader& shader, Camera& camera, std::vector<Sprite>& sprites) {
+void Graphics::draw(Shader& shader, Camera& camera, std::vector<Sprite*>& sprites) {
   if (programs.find(shader.id) == programs.end()) {
     Log::error(Log::Category::Graphics, "Shader program not found.");
     return;
@@ -159,8 +159,8 @@ void Graphics::draw(Shader& shader, Camera& camera, std::vector<Sprite>& sprites
 
   glUseProgram(programs[shader.id]);
 
-  std::stable_sort(sprites.begin(), sprites.end(), [](const Cairn::Sprite& a, const Cairn::Sprite& b) {
-    return static_cast<int>(a.layer) < static_cast<int>(b.layer);
+  std::stable_sort(sprites.begin(), sprites.end(), [](const Cairn::Sprite* a, const Cairn::Sprite* b) {
+    return static_cast<int>(a->layer) < static_cast<int>(b->layer);
   });
 
   GLuint uniform_projection = glGetUniformLocation(programs[shader.id], "projection");
@@ -168,23 +168,23 @@ void Graphics::draw(Shader& shader, Camera& camera, std::vector<Sprite>& sprites
 
   for (auto& sprite : sprites) {
     // If the mesh hasn't been built, build it.
-    if (meshes.find(sprite.mesh->id) == meshes.end()) {
-      build(*sprite.mesh);
+    if (meshes.find(sprite->mesh->id) == meshes.end()) {
+      build(*sprite->mesh);
     }
 
-    glBindVertexArray(meshes[sprite.mesh->id]);
+    glBindVertexArray(meshes[sprite->mesh->id]);
 
     // If the texture hasn't been built, build it.
-    if (textures.find(sprite.texture->id) == textures.end()) {
-      build(*sprite.texture);
+    if (textures.find(sprite->texture->id) == textures.end()) {
+      build(*sprite->texture);
     }
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, textures[sprite.texture->id]);
+    glBindTexture(GL_TEXTURE_2D, textures[sprite->texture->id]);
     glUniform1i(glGetUniformLocation(programs[shader.id], "tex"), 0);
 
     GLuint uniform_model = glGetUniformLocation(programs[shader.id], "model");
-    glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(sprite.get_model()));
+    glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(sprite->get_model()));
 
     glDrawArrays(GL_TRIANGLES, 0, 6);
   }

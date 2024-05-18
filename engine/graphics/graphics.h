@@ -34,7 +34,7 @@ public:
   /** Compile a shader. This is necessary before drawing with it. */
   bool compile(Shader& shader);
 
-  void draw(Shader& shader, Camera& camera, std::vector<Sprite>& sprites);
+  void draw(Shader& shader, Camera& camera, std::vector<Sprite*>& sprites);
 
   void draw(Shader& shader, Camera& camera, Tilemap& tilemap);
 

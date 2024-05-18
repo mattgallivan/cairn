@@ -1,9 +1,13 @@
 #pragma once
 
+#include "input.h"
+
 #include <GL/glew.h> // This is included before GLFW to avoid a compile error.
 #include <GLFW/glfw3.h>
 
 #include <functional>
+#include <set>
+#include <vector>
 
 namespace Cairn {
 
@@ -28,6 +32,12 @@ public:
 
   /** Add a callback for when the window is resized. */
   void add_resize_callback(std::function<void(int, int)> callback);
+
+  /** Bind an input manager to the window. */
+  void bind(Input::Manager* input_manager);
+
+  /** Close the window. */
+  void close();
 
   /** Hide the window. */
   void hide();
@@ -68,6 +78,12 @@ public:
 private:
   /** Callback for when the window's framebuffer size changes (i.e., the window is resized). */
   static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+
+  /** Callback for when a key is pressed. */
+  static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+
+  /** A set of input managers bound to the window. */
+  std::set<Input::Manager*> input_managers;
 
   /** Callbacks for when the window is resized. */
   std::vector<std::function<void(int, int)>> resize_callbacks;
