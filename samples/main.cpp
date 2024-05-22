@@ -22,14 +22,15 @@ int main() {
   Cairn::Graphics graphics(window);
 
   // Register the input with the window.
-  Cairn::Input::Manager input_manager;
+  Cairn::InputManager input_manager;
+  Cairn::InputProfile profile;
+  profile.map(Cairn::KeyboardEvent(Cairn::KeyboardEvent::Key::Escape, Cairn::InputEvent::State::Press),
+              [&window](const Cairn::InputEvent& event) { window.close(); });
+  profile.map(Cairn::MousePositionEvent(), [](const Cairn::InputEvent& event) {
+    const Cairn::MousePositionEvent& mouse_event = static_cast<const Cairn::MousePositionEvent&>(event);
+  });
+  input_manager.add(&profile);
   window.bind(&input_manager);
-
-  Cairn::Input::Profile input_profile;
-  input_profile.set_debug(false);
-  input_profile.bind(Cairn::Input::Key::Esc, Cairn::Input::Action::Press, [&window]() { window.close(); });
-
-  input_manager.add(&input_profile);
 
   // Compile the shaders.
   std::string vertex_shader_source = Cairn::Resource::load_shader("../resources/shaders/vertex.glsl");
@@ -85,17 +86,11 @@ int main() {
   player_sprite.rotation = 10.f;
   sprites.push_back(&player_sprite);
 
-  input_profile.bind(Cairn::Input::Key::W, Cairn::Input::Action::Hold,
-                     [&player_sprite]() { player_sprite.position.y += 5.f; });
-
-  input_profile.bind(Cairn::Input::Key::S, Cairn::Input::Action::Hold,
-                     [&player_sprite]() { player_sprite.position.y -= 5.f; });
-
-  input_profile.bind(Cairn::Input::Key::A, Cairn::Input::Action::Hold,
-                     [&player_sprite]() { player_sprite.position.x -= 5.f; });
-
-  input_profile.bind(Cairn::Input::Key::D, Cairn::Input::Action::Hold,
-                     [&player_sprite]() { player_sprite.position.x += 5.f; });
+  profile.map(Cairn::MouseButtonEvent(Cairn::MouseButtonEvent::MouseButton::Left, Cairn::InputEvent::State::Press),
+              [&player_sprite](const Cairn::InputEvent& event) {
+                const Cairn::MouseButtonEvent& mouse_event = static_cast<const Cairn::MouseButtonEvent&>(event);
+                player_sprite.position = glm::vec2(mouse_event.x, mouse_event.y);
+              });
 
   // Draw the sprite.
   while (window.is_open()) {

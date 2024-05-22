@@ -1,5 +1,10 @@
 #pragma once
 
+#include "input_action.h"
+#include "input_event.h"
+#include "input_manager.h"
+#include "input_profile.h"
+
 #include "log.h"
 
 #include <functional>
@@ -10,18 +15,21 @@
 namespace Cairn {
 namespace Input {
 
+/** An input action is a key press, release, or hold. */
 enum class Action {
   Release = 0,
   Press = 1,
   Hold = 2,
 };
 
+/** A mapping from an action to a string representation. */
 static std::unordered_map<Action, std::string> action_to_string = {
     {Action::Press, "Press"},
     {Action::Release, "Release"},
     {Action::Hold, "Hold"},
 };
 
+/** An input key is a key on the keyboard. */
 enum class Key {
   Esc = 256,
   W = 87,
@@ -30,37 +38,26 @@ enum class Key {
   D = 68,
 };
 
+/** A mapping from a key to a string representation. */
 static std::unordered_map<Key, std::string> key_to_string = {
     {Key::Esc, "Esc"}, {Key::W, "W"}, {Key::A, "A"}, {Key::S, "S"}, {Key::D, "D"},
 };
 
+/** A callback is a function that is called when an input event occurs. */
 using Callback = std::function<void()>;
 
+/** A profile is a collection of bindings and their associated callbacks. */
 class Profile {
 
 public:
-  void bind(Key key, Action action, Callback callback) {
-    if (should_debug) {
-      Log::info(Log::Category::Input, "Bind (" + key_to_string[key] + " " + action_to_string[action] + ")");
-    }
+  void bind(Key key, Action action, Callback callback);
 
-    callbacks[key][action].push_back(callback);
-  }
-
-  void fire(Key key, Action action) {
-    if (should_debug) {
-      Log::info(Log::Category::Input, "Fire (" + key_to_string[key] + " " + action_to_string[action] + ")");
-    }
-
-    for (auto& callback : callbacks[key][action]) {
-      callback();
-    }
-  }
+  void fire(Key key, Action action);
 
   void set_debug(bool should_debug) { this->should_debug = should_debug; }
 
 private:
-  std::unordered_map<Key, std::unordered_map<Action, std::vector<Callback>>> callbacks;
+  std::unordered_map<Key, std::unordered_map<Action, std::vector<Callback>>> key_callbacks;
 
   bool should_debug = false;
 };
@@ -81,6 +78,12 @@ public:
     for (auto& profile : profiles) {
       profile->fire(static_cast<Key>(key), static_cast<Action>(action));
     }
+  }
+
+  void fire_mouse(double x_pos, double y_pos) {
+    Log::info(Log::Category::Input, "Fire (" + std::to_string(x_pos) + ", " + std::to_string(y_pos) + ")");
+
+    // TODO: Fire a porfile?
   }
 
 private:

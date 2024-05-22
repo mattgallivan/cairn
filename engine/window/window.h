@@ -34,7 +34,7 @@ public:
   void add_resize_callback(std::function<void(int, int)> callback);
 
   /** Bind an input manager to the window. */
-  void bind(Input::Manager* input_manager);
+  void bind(InputManager* input_manager);
 
   /** Close the window. */
   void close();
@@ -82,8 +82,14 @@ private:
   /** Callback for when a key is pressed. */
   static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
+  /** Callback for when a mouse button is pressed. */
+  static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
+
+  /** Callback for when the mouse is moved. */
+  static void mouse_position_callback(GLFWwindow* window, double xpos, double ypos);
+
   /** A set of input managers bound to the window. */
-  std::set<Input::Manager*> input_managers;
+  std::set<InputManager*> input_managers;
 
   /** Callbacks for when the window is resized. */
   std::vector<std::function<void(int, int)>> resize_callbacks;
