@@ -17,7 +17,6 @@ set(ENGINE_SOURCES
   engine/graphics/graphics.cpp
   engine/graphics/sprite.cpp
   engine/image/image.cpp
-  engine/input/input.cpp
   engine/input/input_manager.cpp
   engine/input/input_profile.cpp
   engine/log/log.cpp
