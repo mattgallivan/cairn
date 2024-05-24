@@ -18,7 +18,7 @@
 
 int main() {
   // Create the window and graphics system.
-  Cairn::Window window(800, 600, "Cairn Engine v0.2.0");
+  Cairn::Window window(800, 600, "Cairn Engine v0.3.0");
   Cairn::Graphics graphics(window);
 
   // Register the input with the window.
