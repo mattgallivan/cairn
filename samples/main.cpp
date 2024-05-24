@@ -7,6 +7,7 @@
 #include "sprite.h"
 #include "texture.h"
 #include "tilemap.h"
+#include "ui.h"
 #include "window.h"
 
 #include <glm/glm.hpp>
@@ -31,6 +32,10 @@ int main() {
   });
   input_manager.add(&profile);
   window.bind(&input_manager);
+
+  // Create the user interface.
+  Cairn::UIManager ui_manager;
+  Cairn::UILabel label("BEAN BANDANA", glm::vec2(400.f, 400.f), glm::vec2(100.f, 100.f));
 
   // Compile the shaders.
   std::string vertex_shader_source = Cairn::Resource::load_shader("../resources/shaders/vertex.glsl");
@@ -100,6 +105,8 @@ int main() {
     graphics.draw(shader, camera, tilemap);
     graphics.draw(shader, camera, tilemap2);
     graphics.draw(shader, camera, sprites);
+
+    ui_manager.render(label);
 
     window.refresh();
   }

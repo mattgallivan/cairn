@@ -5,6 +5,7 @@ project(Cairn)
 cmake_policy(SET CMP0072 NEW)
 set(OpenGL_GL_PREFERENCE GLVND)
 
+find_package(Freetype REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glfw3 REQUIRED)
 find_package(OpenGL REQUIRED)
@@ -23,16 +24,20 @@ set(ENGINE_SOURCES
   engine/memory/memory.cpp
   engine/resource/resource.cpp
   engine/time/ttime.cpp
+  engine/ui/ui_manager.cpp
   engine/window/window.cpp
 )
 
 add_library(engine ${ENGINE_SOURCES})
 
-target_link_libraries(engine ${GLEW_LIBRARIES})
-target_link_libraries(engine glfw)
-target_link_libraries(engine OpenGL::GL)
-target_link_libraries(engine ${X11_LIBRARIES})
-target_link_libraries(engine stdc++fs)
+target_link_libraries(engine PUBLIC
+  ${FREETYPE_LIBRARIES}
+  ${GLEW_LIBRARIES}
+  glfw
+  OpenGL::GL
+  ${X11_LIBRARIES}
+  stdc++fs
+)
 
 include_directories(${PROJECT_SOURCE_DIR}/lib)
 
@@ -45,7 +50,9 @@ target_include_directories(engine PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/engine/memory
   ${CMAKE_CURRENT_SOURCE_DIR}/engine/resource
   ${CMAKE_CURRENT_SOURCE_DIR}/engine/time
+  ${CMAKE_CURRENT_SOURCE_DIR}/engine/ui
   ${CMAKE_CURRENT_SOURCE_DIR}/engine/window
+  ${FREETYPE_INCLUDE_DIRS}
 )
 
 add_subdirectory(samples)
