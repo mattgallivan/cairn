@@ -37,6 +37,13 @@ int main() {
   Cairn::UIManager ui_manager;
   Cairn::UILabel label("BEAN BANDANA", glm::vec2(400.f, 400.f), glm::vec2(100.f, 100.f));
 
+  std::string file_path = "../resources/textures/portrait.png";
+  int xwidth, xheight, xchannels;
+  unsigned char* image_data = stbi_load(file_path.c_str(), &xwidth, &xheight, &xchannels, 0);
+  // Convert the image data to a vector.
+  std::vector<unsigned char> image_data_vector(image_data, image_data + xwidth * xheight * xchannels);
+  Cairn::UIImage image(glm::vec2(300.f, 300.f), glm::vec2(100.f, 100.f), image_data_vector, xwidth, xheight, xchannels);
+
   // Compile the shaders.
   std::string vertex_shader_source = Cairn::Resource::load_shader("../resources/shaders/vertex.glsl");
   std::string fragment_shader_source = Cairn::Resource::load_shader("../resources/shaders/fragment.glsl");
@@ -107,6 +114,7 @@ int main() {
     graphics.draw(shader, camera, sprites);
 
     ui_manager.render(label);
+    ui_manager.render(image);
 
     window.refresh();
   }

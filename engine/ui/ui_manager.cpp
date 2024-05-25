@@ -8,6 +8,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <iostream>
+
 namespace Cairn {
 
 UIManager::UIManager() {
@@ -133,6 +135,52 @@ GLuint UIManager::create_shader_program(const char* vertex_source, const char* f
   glDeleteShader(fragment_shader);
 
   return shader_program;
+}
+
+void UIManager::render(UIImage image) {
+  GLuint texture_id;
+  glGenTextures(1, &texture_id);
+  glBindTexture(GL_TEXTURE_2D, texture_id);
+
+  GLenum format = image.num_channels == 3 ? GL_RGB : GL_RGBA;
+  glTexImage2D(GL_TEXTURE_2D, 0, format, image.width, image.height, 0, format, GL_UNSIGNED_BYTE, image.data.data());
+  glGenerateMipmap(GL_TEXTURE_2D);
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+  glUseProgram(shader_program);
+
+  glActiveTexture(GL_TEXTURE0);
+  glBindVertexArray(vao);
+
+  glm::mat4 projection = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f);
+  glUniformMatrix4fv(glGetUniformLocation(shader_program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+
+  // Set up the vertices for the image quad
+  float xpos = image.position.x;
+  float ypos = image.position.y;
+  float w = image.size.x;
+  float h = image.size.y;
+  float vertices[6][4] = {{xpos, ypos + h, 0.0f, 0.0f}, {xpos, ypos, 0.0f, 1.0f},     {xpos + w, ypos, 1.0f, 1.0f},
+
+                          {xpos, ypos + h, 0.0f, 0.0f}, {xpos + w, ypos, 1.0f, 1.0f}, {xpos + w, ypos + h, 1.0f, 0.0f}};
+
+  glBindTexture(GL_TEXTURE_2D, texture_id);
+
+  glBindBuffer(GL_ARRAY_BUFFER, vbo);
+  glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+  glDrawArrays(GL_TRIANGLES, 0, 6);
+
+  glBindVertexArray(0);
+  glBindTexture(GL_TEXTURE_2D, 0);
+
+  // Cleanup texture
+  glDeleteTextures(1, &texture_id);
 }
 
 void UIManager::render(UILabel label) {

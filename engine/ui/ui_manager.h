@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ui_image.h"
 #include "ui_label.h"
 
 #include <GL/glew.h>
@@ -20,6 +21,8 @@ class UIManager {
 
 public:
   UIManager();
+
+  void render(UIImage image);
 
   void render(UILabel label);
 
