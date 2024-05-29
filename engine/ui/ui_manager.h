@@ -1,11 +1,14 @@
 #pragma once
 
+#include "shader.h"
+
 #include "ui_image.h"
 #include "ui_label.h"
 
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 
+#include <memory>
 #include <unordered_map>
 
 namespace Cairn {
@@ -29,13 +32,16 @@ public:
 private:
   GLuint compile_shader(GLenum type, const char* source);
 
-  GLuint create_shader_program(const char* vertex_source, const char* fragment_source);
+  GLuint create_shader_program(Shader* shader);
 
   std::unordered_map<GLchar, Character> characters;
 
   GLuint vao, vbo;
 
-  GLuint shader_program;
+  GLuint image_shader_program, text_shader_program;
+
+  std::unique_ptr<Shader> image_shader;
+  std::unique_ptr<Shader> text_shader;
 };
 
 } // namespace Cairn

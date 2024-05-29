@@ -8,7 +8,7 @@ namespace Cairn {
 class Shader {
 
 public:
-  Shader(const std::string& vertex_source, const std::string& fragment_source)
+  Shader(const std::string vertex_source, const std::string fragment_source)
       : vertex_source(vertex_source), fragment_source(fragment_source) {
     static unsigned int counter = 0;
     id = "Shader_" + std::to_string(counter++);

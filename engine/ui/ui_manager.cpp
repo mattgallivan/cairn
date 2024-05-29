@@ -1,6 +1,7 @@
 #include "ui_manager.h"
 
 #include "log.h"
+#include "resource.h"
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -13,6 +14,16 @@
 namespace Cairn {
 
 UIManager::UIManager() {
+  // Load the shaders.
+  image_shader = std::make_unique<Shader>(Resource::load_shader("../resources/shaders/ui/image.vert"),
+                                          Resource::load_shader("../resources/shaders/ui/image.frag"));
+  image_shader_program = create_shader_program(image_shader.get());
+
+  text_shader = std::make_unique<Shader>(Resource::load_shader("../resources/shaders/ui/text.vert"),
+                                         Resource::load_shader("../resources/shaders/ui/text.frag"));
+
+  text_shader_program = create_shader_program(text_shader.get());
+
   // Load the font library and font.
   FT_Library ft;
   if (FT_Init_FreeType(&ft)) {
@@ -58,36 +69,6 @@ UIManager::UIManager() {
   FT_Done_Face(face);
   FT_Done_FreeType(ft);
 
-  // Create and compile the shaders.
-  const char* vertex_shader_source = R"(
-#version 330 core
-layout (location = 0) in vec4 vertex;
-out vec2 TexCoords;
-
-uniform mat4 projection;
-
-void main() {
-	gl_Position = projection * vec4(vertex.xy, 0.0, 1.0);
-	TexCoords = vertex.zw;
-}
-)";
-
-  const char* fragment_shader_source = R"(
-#version 330 core
-in vec2 TexCoords;
-out vec4 color;
-
-uniform sampler2D text;
-uniform vec3 textColor;
-
-void main() {
-	vec4 sampled = vec4(1.0, 1.0, 1.0, texture(text, TexCoords).r);
-	color = vec4(textColor, 1.0) * sampled;
-}
-)";
-
-  shader_program = create_shader_program(vertex_shader_source, fragment_shader_source);
-
   glGenVertexArrays(1, &vao);
   glGenBuffers(1, &vbo);
   glBindVertexArray(vao);
@@ -114,14 +95,15 @@ GLuint UIManager::compile_shader(GLenum type, const char* source) {
   return shader;
 }
 
-GLuint UIManager::create_shader_program(const char* vertex_source, const char* fragment_source) {
-  GLuint vertex_shader = compile_shader(GL_VERTEX_SHADER, vertex_source);
-  GLuint fragment_shader = compile_shader(GL_FRAGMENT_SHADER, fragment_source);
+GLuint UIManager::create_shader_program(Shader* shader) {
+  GLuint vertex_shader = compile_shader(GL_VERTEX_SHADER, shader->vertex_source.c_str());
+  GLuint fragment_shader = compile_shader(GL_FRAGMENT_SHADER, shader->fragment_source.c_str());
 
   GLuint shader_program = glCreateProgram();
   glAttachShader(shader_program, vertex_shader);
   glAttachShader(shader_program, fragment_shader);
   glLinkProgram(shader_program);
+
   // Check for linking errors
   GLint success;
   GLchar info_log[512];
@@ -138,6 +120,8 @@ GLuint UIManager::create_shader_program(const char* vertex_source, const char* f
 }
 
 void UIManager::render(UIImage image) {
+  glBindVertexArray(vao);
+
   GLuint texture_id;
   glGenTextures(1, &texture_id);
   glBindTexture(GL_TEXTURE_2D, texture_id);
@@ -151,13 +135,14 @@ void UIManager::render(UIImage image) {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-  glUseProgram(shader_program);
+  glUseProgram(image_shader_program);
 
   glActiveTexture(GL_TEXTURE0);
-  glBindVertexArray(vao);
+  glUniform1i(glGetUniformLocation(image_shader_program, "sTexture"), 0);
 
   glm::mat4 projection = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f);
-  glUniformMatrix4fv(glGetUniformLocation(shader_program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+  glUniformMatrix4fv(glGetUniformLocation(image_shader_program, "uProjection"), 1, GL_FALSE,
+                     glm::value_ptr(projection));
 
   // Set up the vertices for the image quad
   float xpos = image.position.x;
@@ -185,14 +170,14 @@ void UIManager::render(UIImage image) {
 
 void UIManager::render(UILabel label) {
   // Activate corresponding render state
-  glUseProgram(shader_program);
-  glUniform3f(glGetUniformLocation(shader_program, "textColor"), 1.f, 1.f, 1.f);
+  glUseProgram(text_shader_program);
+  glUniform3f(glGetUniformLocation(text_shader_program, "textColor"), 1.f, 1.f, 1.f);
   glActiveTexture(GL_TEXTURE0);
   glBindVertexArray(vao);
 
   // Set up the projection matrix.
   glm::mat4 projection = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f);
-  glUniformMatrix4fv(glGetUniformLocation(shader_program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+  glUniformMatrix4fv(glGetUniformLocation(text_shader_program, "uProjection"), 1, GL_FALSE, glm::value_ptr(projection));
 
   // Iterate through all characters
   std::string::const_iterator c;
