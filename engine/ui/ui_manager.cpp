@@ -82,6 +82,11 @@ UIManager::UIManager(Window* window) {
   glBindVertexArray(0);
 }
 
+UIManager::~UIManager() {
+  glDeleteVertexArrays(1, &vao);
+  glDeleteBuffers(1, &vbo);
+}
+
 GLuint UIManager::compile_shader(GLenum type, const char* source) {
   GLuint shader = glCreateShader(type);
   glShaderSource(shader, 1, &source, nullptr);

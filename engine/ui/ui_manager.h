@@ -25,6 +25,8 @@ class UIManager {
 public:
   UIManager(Window* window);
 
+  ~UIManager();
+
   void render(UIImage image);
 
   void render(UILabel label);
