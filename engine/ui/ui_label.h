@@ -12,8 +12,8 @@ namespace Cairn {
 class UILabel : public UIElement {
 
 public:
-  UILabel(const std::string& text, const glm::vec2& position, const glm::vec2& size)
-      : UIElement(position, size), text(text) {}
+  UILabel(const std::string& text, const glm::vec2& position, const glm::vec2& size, Color color = White)
+      : UIElement(position, size, color), text(text) {}
 
   /** The font size of the text. */
   int font_size = 16;

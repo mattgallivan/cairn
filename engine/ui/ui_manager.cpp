@@ -178,7 +178,7 @@ void UIManager::render(UIImage image) {
 void UIManager::render(UILabel label) {
   // Activate corresponding render state
   glUseProgram(text_shader_program);
-  glUniform3f(glGetUniformLocation(text_shader_program, "textColor"), 1.f, 1.f, 1.f);
+  glUniform3f(glGetUniformLocation(text_shader_program, "uTextColor"), label.color.r, label.color.g, label.color.b);
   glActiveTexture(GL_TEXTURE0);
   glBindVertexArray(vao);
 
