@@ -91,6 +91,9 @@ void Window::framebuffer_size_callback(GLFWwindow* window, int width, int height
     return;
   }
 
+  win->width = width;
+  win->height = height;
+
   for (auto& callback : win->resize_callbacks) {
     callback(width, height);
   }

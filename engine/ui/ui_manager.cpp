@@ -13,7 +13,9 @@
 
 namespace Cairn {
 
-UIManager::UIManager() {
+UIManager::UIManager(Window* window) {
+  this->window = window;
+
   // Load the shaders.
   image_shader = std::make_unique<Shader>(Resource::load_shader("../resources/shaders/ui/image.vert"),
                                           Resource::load_shader("../resources/shaders/ui/image.frag"));
@@ -140,7 +142,7 @@ void UIManager::render(UIImage image) {
   glActiveTexture(GL_TEXTURE0);
   glUniform1i(glGetUniformLocation(image_shader_program, "sTexture"), 0);
 
-  glm::mat4 projection = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f);
+  glm::mat4 projection = glm::ortho(0.0f, (float)window->width, 0.0f, (float)window->height);
   glUniformMatrix4fv(glGetUniformLocation(image_shader_program, "uProjection"), 1, GL_FALSE,
                      glm::value_ptr(projection));
 
@@ -176,7 +178,7 @@ void UIManager::render(UILabel label) {
   glBindVertexArray(vao);
 
   // Set up the projection matrix.
-  glm::mat4 projection = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f);
+  glm::mat4 projection = glm::ortho(0.0f, (float)window->width, 0.0f, (float)window->height);
   glUniformMatrix4fv(glGetUniformLocation(text_shader_program, "uProjection"), 1, GL_FALSE, glm::value_ptr(projection));
 
   // Iterate through all characters

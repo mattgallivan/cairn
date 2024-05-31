@@ -1,9 +1,9 @@
 #pragma once
 
 #include "shader.h"
-
 #include "ui_image.h"
 #include "ui_label.h"
+#include "window.h"
 
 #include <GL/glew.h>
 #include <glm/glm.hpp>
@@ -23,7 +23,7 @@ struct Character {
 class UIManager {
 
 public:
-  UIManager();
+  UIManager(Window* window);
 
   void render(UIImage image);
 
@@ -34,7 +34,7 @@ private:
 
   GLuint create_shader_program(Shader* shader);
 
-  std::unordered_map<GLchar, Character> characters;
+  std::unordered_map<GLchar, Character> characters;  
 
   GLuint vao, vbo;
 
@@ -42,6 +42,8 @@ private:
 
   std::unique_ptr<Shader> image_shader;
   std::unique_ptr<Shader> text_shader;
+
+  Window* window;
 };
 
 } // namespace Cairn

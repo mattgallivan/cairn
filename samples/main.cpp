@@ -18,8 +18,11 @@
 #include <functional>
 
 int main() {
+  const int WINDOW_WIDTH = 800;
+  const int WINDOW_HEIGHT = 600;
+
   // Create the window and graphics system.
-  Cairn::Window window(800, 600, "Cairn Engine v0.3.0");
+  Cairn::Window window(WINDOW_WIDTH, WINDOW_HEIGHT, "Cairn Engine v0.3.0");
   Cairn::Graphics graphics(window);
 
   // Register the input with the window.
@@ -34,7 +37,8 @@ int main() {
   window.bind(&input_manager);
 
   // Create the user interface.
-  Cairn::UIManager ui_manager;
+  Cairn::UIManager ui_manager(&window);
+
   Cairn::UILabel label("BEAN BANDANA", glm::vec2(400.f, 400.f), glm::vec2(100.f, 100.f));
 
   std::string file_path = "../resources/textures/portrait.png";
