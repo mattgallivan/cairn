@@ -1,5 +1,4 @@
 #include "ui_manager.h"
-
 #include "log.h"
 #include "resource.h"
 
@@ -10,9 +9,14 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <iostream>
+#include <memory>
 #include <stdexcept>
+#include <vector>
 
 namespace Cairn {
+
+constexpr int FONT_SIZE = 48;
+constexpr int CHARACTERS_RANGE = 128;
 
 UIManager::UIManager(Window* window) : window(window) {
   // Load the shaders.
@@ -38,10 +42,10 @@ UIManager::UIManager(Window* window) : window(window) {
     throw std::runtime_error("Failed to load font");
   }
 
-  FT_Set_Pixel_Sizes(face, 0, 48);
+  FT_Set_Pixel_Sizes(face, 0, FONT_SIZE);
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-  for (unsigned char c = 0; c < 128; c++) {
+  for (unsigned char c = 0; c < CHARACTERS_RANGE; c++) {
     if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {
       Log::error(Log::Category::UI, "Could not load glyph.");
       continue;
@@ -124,7 +128,17 @@ GLuint UIManager::create_shader_program(Shader* shader) {
   return shader_program;
 }
 
-void UIManager::render(const UIImage& image) {
+void UIManager::render(const std::vector<std::unique_ptr<UIElement>>& elements) {
+  for (const auto& element : elements) {
+    if (const UIImage* image = dynamic_cast<const UIImage*>(element.get())) {
+      renderImage(*image);
+    } else if (const UILabel* label = dynamic_cast<const UILabel*>(element.get())) {
+      renderText(*label);
+    }
+  }
+}
+
+void UIManager::renderImage(const UIImage& image) {
   glBindVertexArray(vao);
 
   GLuint texture_id;
@@ -172,7 +186,7 @@ void UIManager::render(const UIImage& image) {
   glDeleteTextures(1, &texture_id);
 }
 
-void UIManager::render(const UILabel& label) {
+void UIManager::renderText(const UILabel& label) {
   // Activate corresponding render state
   glUseProgram(text_shader_program);
   glUniform3f(glGetUniformLocation(text_shader_program, "uTextColor"), label.color.r, label.color.g, label.color.b);
@@ -183,12 +197,14 @@ void UIManager::render(const UILabel& label) {
   glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(window->width), 0.0f, static_cast<float>(window->height));
   glUniformMatrix4fv(glGetUniformLocation(text_shader_program, "uProjection"), 1, GL_FALSE, glm::value_ptr(projection));
 
-  // Iterate through all characters
-  for (auto c = label.text.begin(); c != label.text.end(); ++c) {
-    Character ch = characters[*c];
+  glm::vec2 cursor_position = label.position; // Local cursor position to avoid modifying the read-only label
 
-    float xpos = label.position.x + ch.bearing.x * label.scale;
-    float ypos = label.position.y - (ch.size.y - ch.bearing.y) * label.scale;
+  // Iterate through all characters
+  for (const char& c : label.text) {
+    Character ch = characters[c];
+
+    float xpos = cursor_position.x + ch.bearing.x * label.scale;
+    float ypos = cursor_position.y - (ch.size.y - ch.bearing.y) * label.scale;
 
     float w = ch.size.x * label.scale;
     float h = ch.size.y * label.scale;
@@ -205,7 +221,7 @@ void UIManager::render(const UILabel& label) {
     // Render quad
     glDrawArrays(GL_TRIANGLES, 0, 6);
     // Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-    label.position.x += (ch.advance >> 6) * label.scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
+    cursor_position.x += (ch.advance >> 6) * label.scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
   }
   glBindVertexArray(0);
   glBindTexture(GL_TEXTURE_2D, 0);

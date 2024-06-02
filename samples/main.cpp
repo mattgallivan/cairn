@@ -16,6 +16,9 @@
 #include <stb/stb_image.h>
 
 #include <functional>
+#include <iostream>
+#include <memory>
+#include <vector>
 
 int main() {
   const int WINDOW_WIDTH = 800;
@@ -39,16 +42,25 @@ int main() {
   // Create the user interface.
   Cairn::UIManager ui_manager(&window);
 
-  Cairn::UILabel label("BEAN BANDANA", glm::vec2(400.f, 700.f), glm::vec2(100.f, 100.f), Cairn::White);
-  Cairn::UILabel label1("Introducing...", glm::vec2(400.f, 750.f), glm::vec2(100.f, 100.f), Cairn::Red);
+  // Create UI elements using std::make_unique.
+  std::vector<std::unique_ptr<Cairn::UIElement>> ui_elements;
+  ui_elements.push_back(
+      std::make_unique<Cairn::UILabel>("BEAN BANDANA", glm::vec2(400.f, 700.f), glm::vec2(100.f, 100.f), Cairn::White));
+  ui_elements.push_back(
+      std::make_unique<Cairn::UILabel>("Introducing...", glm::vec2(400.f, 750.f), glm::vec2(100.f, 100.f), Cairn::Red));
 
   std::string file_path = "../resources/textures/portrait.png";
   int xwidth, xheight, xchannels;
   unsigned char* image_data = stbi_load(file_path.c_str(), &xwidth, &xheight, &xchannels, 0);
-  // Convert the image data to a vector.
-  std::vector<unsigned char> image_data_vector(image_data, image_data + xwidth * xheight * xchannels);
-  Cairn::UIImage image(glm::vec2(1000.f, 1000.f), glm::vec2(100.f, 100.f), image_data_vector, xwidth, xheight,
-                       xchannels);
+  if (image_data) {
+    std::vector<unsigned char> image_data_vector(image_data, image_data + xwidth * xheight * xchannels);
+    ui_elements.push_back(std::make_unique<Cairn::UIImage>(glm::vec2(1000.f, 1000.f), glm::vec2(100.f, 100.f),
+                                                           image_data_vector, xwidth, xheight, xchannels));
+    stbi_image_free(image_data); // Free the image data after creating the UIImage.
+  } else {
+    std::cerr << "Failed to load image: " << file_path << std::endl;
+    return 1;
+  }
 
   // Compile the shaders.
   std::string vertex_shader_source = Cairn::Resource::load_shader("../resources/shaders/vertex.glsl");
@@ -84,6 +96,7 @@ int main() {
 
   unsigned char* atlas_data = stbi_load("../resources/textures/blocks.png", &width, &height, &channels, 0);
   Cairn::TextureAtlas texture_atlas(atlas_data, width, height, channels, 48, 48);
+  stbi_image_free(atlas_data); // Free the image data after creating the TextureAtlas.
 
   // Create the tilemap.
   std::vector<int> tilemap_data = {
@@ -119,9 +132,7 @@ int main() {
     graphics.draw(shader, camera, tilemap2);
     graphics.draw(shader, camera, sprites);
 
-    ui_manager.render(label);
-    ui_manager.render(label1);
-    ui_manager.render(image);
+    ui_manager.render(ui_elements);
 
     window.refresh();
   }
