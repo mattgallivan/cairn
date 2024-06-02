@@ -21,18 +21,18 @@
 #include <vector>
 
 int main() {
-  const std::string ENGINE_NAME = "Cairn Engine";
-  const int MAJOR_VERSION = 0;
-  const int MINOR_VERSION = 3;
-  const int PATCH_VERSION = 0;
-  const std::string VERSION =
-      std::to_string(MAJOR_VERSION) + "." + std::to_string(MINOR_VERSION) + "." + std::to_string(PATCH_VERSION);
+  const std::string engine_name = "Cairn Engine";
+  const int major_version = 0;
+  const int minor_version = 3;
+  const int patch_version = 0;
 
-  const int WINDOW_WIDTH = 800;
-  const int WINDOW_HEIGHT = 600;
+  const int window_width = 800;
+  const int window_height = 600;
 
   // Create the window and graphics system.
-  Cairn::Window window(WINDOW_WIDTH, WINDOW_HEIGHT, ENGINE_NAME + " " + VERSION);
+  const std::string window_title =
+      std::to_string(major_version) + "." + std::to_string(minor_version) + "." + std::to_string(patch_version);
+  Cairn::Window window(window_width, window_height, window_title);
   Cairn::Graphics graphics(window);
 
   // Register the input with the window.
