@@ -21,6 +21,7 @@
 #include <vector>
 
 int main() {
+  // WINDOW
   const std::string engine_name = "Cairn Engine";
   const int major_version = 0;
   const int minor_version = 3;
@@ -29,13 +30,23 @@ int main() {
   const int window_width = 800;
   const int window_height = 600;
 
-  // Create the window and graphics system.
   const std::string window_title =
       std::to_string(major_version) + "." + std::to_string(minor_version) + "." + std::to_string(patch_version);
   Cairn::Window window(window_width, window_height, window_title);
-  Cairn::Graphics graphics(window);
 
-  // Register the input with the window.
+  // GRAPHICS
+  Cairn::Graphics graphics(window);
+  std::string vertex_shader_source = Cairn::Resource::load_shader("../resources/shaders/vertex.glsl");
+  std::string fragment_shader_source = Cairn::Resource::load_shader("../resources/shaders/fragment.glsl");
+
+  Cairn::Shader shader(vertex_shader_source, fragment_shader_source);
+  if (!graphics.compile(shader)) {
+    return 1;
+  }
+
+  Cairn::Mesh mesh;
+
+  // INPUT
   Cairn::InputManager input_manager;
   Cairn::InputProfile profile;
   profile.map(Cairn::KeyboardEvent(Cairn::KeyboardEvent::Key::Escape, Cairn::InputEvent::State::Press),
@@ -46,10 +57,8 @@ int main() {
   input_manager.add(&profile);
   window.bind(&input_manager);
 
-  // Create the user interface.
+  // UI
   Cairn::UIManager ui_manager(&window);
-
-  // Create UI elements using std::make_unique.
   std::vector<std::unique_ptr<Cairn::UIElement>> ui_elements;
   ui_elements.push_back(
       std::make_unique<Cairn::UILabel>("BEAN BANDANA", glm::vec2(400.f, 700.f), glm::vec2(100.f, 100.f), Cairn::White));
@@ -69,16 +78,7 @@ int main() {
     return 1;
   }
 
-  // Compile the shaders.
-  std::string vertex_shader_source = Cairn::Resource::load_shader("../resources/shaders/vertex.glsl");
-  std::string fragment_shader_source = Cairn::Resource::load_shader("../resources/shaders/fragment.glsl");
-
-  Cairn::Shader shader(vertex_shader_source, fragment_shader_source);
-  if (!graphics.compile(shader)) {
-    return 1;
-  }
-
-  // Create the camera.
+  // CAMERA
   Cairn::Camera camera;
   window.add_resize_callback([&camera](int width, int height) {
     camera.left = 0.f;
@@ -87,10 +87,7 @@ int main() {
     camera.bottom = 0.f;
   });
 
-  // Build the mesh.
-  Cairn::Mesh mesh;
-
-  // Load and build the textures.
+  // TEXTURE
   Cairn::Resource resource_manager;
 
   Cairn::Texture* texture = resource_manager.load_texture("../resources/sprites/toast.png");
@@ -105,7 +102,7 @@ int main() {
   Cairn::TextureAtlas texture_atlas(atlas_data, width, height, channels, 48, 48);
   stbi_image_free(atlas_data); // Free the image data after creating the TextureAtlas.
 
-  // Create the tilemap.
+  // TILEMAP
   std::vector<int> tilemap_data = {
       2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 1, 2, 1, 2,
       1, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 1, 2, 1,
@@ -116,7 +113,7 @@ int main() {
   Cairn::Tilemap tilemap2(10, 10, 48, 48, &texture_atlas, tilemap_data);
   tilemap2.position = glm::vec2(1000.f, 500.f);
 
-  // Create the sprites.
+  // SPRITE
   std::vector<Cairn::Sprite*> sprites;
   Cairn::Sprite player_sprite(&mesh, texture);
   player_sprite.position = glm::vec2(400.f, 600.f);
@@ -124,13 +121,14 @@ int main() {
   player_sprite.rotation = 10.f;
   sprites.push_back(&player_sprite);
 
+  // INPUT
   profile.map(Cairn::MouseButtonEvent(Cairn::MouseButtonEvent::MouseButton::Left, Cairn::InputEvent::State::Press),
               [&player_sprite](const Cairn::InputEvent& event) {
                 const Cairn::MouseButtonEvent& mouse_event = static_cast<const Cairn::MouseButtonEvent&>(event);
                 player_sprite.position = glm::vec2(mouse_event.x, mouse_event.y);
               });
 
-  // Draw the sprite.
+  // GAME LOOP
   while (window.is_open()) {
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
