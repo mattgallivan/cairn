@@ -10,12 +10,11 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <iostream>
+#include <stdexcept>
 
 namespace Cairn {
 
-UIManager::UIManager(Window* window) {
-  this->window = window;
-
+UIManager::UIManager(Window* window) : window(window) {
   // Load the shaders.
   image_shader = std::make_unique<Shader>(Resource::load_shader("../resources/shaders/ui/image.vert"),
                                           Resource::load_shader("../resources/shaders/ui/image.frag"));
@@ -23,25 +22,23 @@ UIManager::UIManager(Window* window) {
 
   text_shader = std::make_unique<Shader>(Resource::load_shader("../resources/shaders/ui/text.vert"),
                                          Resource::load_shader("../resources/shaders/ui/text.frag"));
-
   text_shader_program = create_shader_program(text_shader.get());
 
   // Load the font library and font.
   FT_Library ft;
   if (FT_Init_FreeType(&ft)) {
     Log::error(Log::Category::UI, "Could not init FreeType library.");
-    return;
+    throw std::runtime_error("Failed to initialize FreeType library");
   }
 
   FT_Face face;
   if (FT_New_Face(ft, "../resources/fonts/playfair/PlayfairDisplayMedium-9YKZK.ttf", 0, &face)) {
     Log::error(Log::Category::UI, "Could not load font.");
     FT_Done_FreeType(ft);
-    return;
+    throw std::runtime_error("Failed to load font");
   }
 
   FT_Set_Pixel_Sizes(face, 0, 48);
-
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
   for (unsigned char c = 0; c < 128; c++) {
@@ -91,12 +88,13 @@ GLuint UIManager::compile_shader(GLenum type, const char* source) {
   GLuint shader = glCreateShader(type);
   glShaderSource(shader, 1, &source, nullptr);
   glCompileShader(shader);
+
   // Check for shader compile errors
   GLint success;
   GLchar info_log[512];
   glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
   if (!success) {
-    glGetShaderInfoLog(shader, 512, NULL, info_log);
+    glGetShaderInfoLog(shader, 512, nullptr, info_log);
     Log::error(Log::Category::UI, "Shader compilation failed: " + std::string(info_log));
   }
   return shader;
@@ -116,7 +114,7 @@ GLuint UIManager::create_shader_program(Shader* shader) {
   GLchar info_log[512];
   glGetProgramiv(shader_program, GL_LINK_STATUS, &success);
   if (!success) {
-    glGetProgramInfoLog(shader_program, 512, NULL, info_log);
+    glGetProgramInfoLog(shader_program, 512, nullptr, info_log);
     Log::error(Log::Category::UI, "Shader linking failed: " + std::string(info_log));
   }
 
@@ -126,7 +124,7 @@ GLuint UIManager::create_shader_program(Shader* shader) {
   return shader_program;
 }
 
-void UIManager::render(UIImage image) {
+void UIManager::render(const UIImage& image) {
   glBindVertexArray(vao);
 
   GLuint texture_id;
@@ -147,7 +145,7 @@ void UIManager::render(UIImage image) {
   glActiveTexture(GL_TEXTURE0);
   glUniform1i(glGetUniformLocation(image_shader_program, "sTexture"), 0);
 
-  glm::mat4 projection = glm::ortho(0.0f, (float)window->width, 0.0f, (float)window->height);
+  glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(window->width), 0.0f, static_cast<float>(window->height));
   glUniformMatrix4fv(glGetUniformLocation(image_shader_program, "uProjection"), 1, GL_FALSE,
                      glm::value_ptr(projection));
 
@@ -157,7 +155,6 @@ void UIManager::render(UIImage image) {
   float w = image.size.x;
   float h = image.size.y;
   float vertices[6][4] = {{xpos, ypos + h, 0.0f, 0.0f}, {xpos, ypos, 0.0f, 1.0f},     {xpos + w, ypos, 1.0f, 1.0f},
-
                           {xpos, ypos + h, 0.0f, 0.0f}, {xpos + w, ypos, 1.0f, 1.0f}, {xpos + w, ypos + h, 1.0f, 0.0f}};
 
   glBindTexture(GL_TEXTURE_2D, texture_id);
@@ -175,7 +172,7 @@ void UIManager::render(UIImage image) {
   glDeleteTextures(1, &texture_id);
 }
 
-void UIManager::render(UILabel label) {
+void UIManager::render(const UILabel& label) {
   // Activate corresponding render state
   glUseProgram(text_shader_program);
   glUniform3f(glGetUniformLocation(text_shader_program, "uTextColor"), label.color.r, label.color.g, label.color.b);
@@ -183,12 +180,11 @@ void UIManager::render(UILabel label) {
   glBindVertexArray(vao);
 
   // Set up the projection matrix.
-  glm::mat4 projection = glm::ortho(0.0f, (float)window->width, 0.0f, (float)window->height);
+  glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(window->width), 0.0f, static_cast<float>(window->height));
   glUniformMatrix4fv(glGetUniformLocation(text_shader_program, "uProjection"), 1, GL_FALSE, glm::value_ptr(projection));
 
   // Iterate through all characters
-  std::string::const_iterator c;
-  for (c = label.text.begin(); c != label.text.end(); c++) {
+  for (auto c = label.text.begin(); c != label.text.end(); ++c) {
     Character ch = characters[*c];
 
     float xpos = label.position.x + ch.bearing.x * label.scale;
@@ -197,9 +193,9 @@ void UIManager::render(UILabel label) {
     float w = ch.size.x * label.scale;
     float h = ch.size.y * label.scale;
     // Update VBO for each character
-    float vertices[6][4] = {{xpos, ypos + h, 0.0, 0.0}, {xpos, ypos, 0.0, 1.0},     {xpos + w, ypos, 1.0, 1.0},
-
-                            {xpos, ypos + h, 0.0, 0.0}, {xpos + w, ypos, 1.0, 1.0}, {xpos + w, ypos + h, 1.0, 0.0}};
+    float vertices[6][4] = {{xpos, ypos + h, 0.0f, 0.0f}, {xpos, ypos, 0.0f, 1.0f},
+                            {xpos + w, ypos, 1.0f, 1.0f}, {xpos, ypos + h, 0.0f, 0.0f},
+                            {xpos + w, ypos, 1.0f, 1.0f}, {xpos + w, ypos + h, 1.0f, 0.0f}};
     // Render glyph texture over quad
     glBindTexture(GL_TEXTURE_2D, ch.texture_id);
     // Update content of VBO memory
