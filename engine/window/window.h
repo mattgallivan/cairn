@@ -7,6 +7,7 @@
 
 #include <functional>
 #include <set>
+#include <string>
 #include <vector>
 
 namespace Cairn {
@@ -15,7 +16,7 @@ namespace Cairn {
 class Window {
 
 public:
-  Window(int width, int height, const char* title);
+  Window(int width, int height, std::string title);
 
   ~Window();
 
@@ -73,7 +74,7 @@ public:
   int width;
 
   /** The window's title. */
-  const char* title;
+  std::string title;
 
 private:
   /** Callback for when the window's framebuffer size changes (i.e., the window is resized). */

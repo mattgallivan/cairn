@@ -21,6 +21,7 @@ public:
   /** The text to display. */
   std::string text;
 
+  /** The scale of the text. */
   float scale = 1.f;
 };
 

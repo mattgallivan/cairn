@@ -6,7 +6,7 @@
 
 namespace Cairn {
 
-Window::Window(int width, int height, const char* title) {
+Window::Window(int width, int height, std::string title) {
   this->width = width;
   this->height = height;
   this->title = title;
@@ -16,7 +16,7 @@ Window::Window(int width, int height, const char* title) {
     exit(1);
   }
 
-  window = glfwCreateWindow(width, height, title, nullptr, nullptr);
+  window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
   if (!window) {
     Log::error(Log::Category::Window, "Failed to create window");
     glfwTerminate();
