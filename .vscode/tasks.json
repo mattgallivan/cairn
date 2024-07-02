@@ -1,0 +1,53 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Configure CMake",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                ".."
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            },
+            "group": "build",
+            "problemMatcher": ["$gcc"],
+            "detail": "Configure the project using CMake."
+        },
+        {
+            "label": "Build Sample",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "${input:sampleName}_sample"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            },
+            "group": "build",
+            "dependsOn": "Configure CMake",
+            "problemMatcher": ["$gcc"],
+            "detail": "Build the specified sample."
+        },
+        {
+            "label": "Run Sample",
+            "type": "shell",
+            "command": "${workspaceFolder}/build/samples/${input:sampleName}_sample",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "problemMatcher": [],
+            "detail": "Run the specified sample."
+        }
+    ],
+    "inputs": [
+        {
+            "id": "sampleName",
+            "type": "promptString",
+            "description": "Enter the sample name",
+            "default": "animation"
+        }
+    ]
+}
