@@ -24,7 +24,7 @@ int main() {
   // WINDOW
   const std::string engine_name = "Cairn Engine";
   const int major_version = 0;
-  const int minor_version = 3;
+  const int minor_version = 4;
   const int patch_version = 0;
 
   const int window_width = 800;
