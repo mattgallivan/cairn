@@ -16,3 +16,6 @@ target_link_libraries(time_sample engine)
 
 add_executable(window_sample window.cpp)
 target_link_libraries(window_sample engine)
+
+add_executable(animation_sample animation.cpp)
+target_link_libraries(animation_sample engine)
