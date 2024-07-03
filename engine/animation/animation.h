@@ -5,8 +5,6 @@
 #include <stdexcept>
 #include <vector>
 
-// #include "image.h"
-
 struct Image {};
 
 namespace Cairn::Animation {
@@ -15,8 +13,8 @@ namespace Cairn::Animation {
  * An animation frame is a single image that will be played in an animation.
  *
  * \code
- * std::shared_ptr<Image> image = std::make_shared<Image>();
- * Cairn::Animation::Frame frame(image.get());
+ * Image image;
+ * Cairn::Animation::Frame frame(&image);
  * \endcode
  */
 struct Frame {
@@ -35,8 +33,8 @@ struct Frame {
  * An animation is a set of frames to be played in sequence.
  *
  * \code
- * std::shared_ptr<Image> image = std::make_shared<Image>();
- * Cairn::Animation::Frame frame(image.get());
+ * Image image;
+ * Cairn::Animation::Frame frame(&image);
  * std::vector<Cairn::Animation::Frame> frames = {frame};
  * Cairn::Animation::Animation animation(frames);
  * \endcode
@@ -48,56 +46,28 @@ public:
   explicit Animation(const std::vector<Frame>& frames) : frames(frames) {}
 
   /** Get the frame at the given index. */
-  const Frame& at(int index) const {
-    if (index < 0 || index >= frames.size()) {
-      throw std::out_of_range("Index out of range.");
-    }
-    return frames.at(index);
-  }
+  const Frame& at(int index) const;
 
   /** Get the current frame being displayed. */
-  const Frame& get_current_frame() const {
-    if (frames.empty()) {
-      throw std::out_of_range("No frames in animation.");
-    }
-    return at(current_frame);
-  }
+  const Frame& get_current_frame() const;
 
-  bool is_playing() const { return is_currently_playing; }
+  /** Returns true if the animation is currently playing. */
+  bool is_playing() const;
 
   /** Pause the animation. */
-  void pause() { is_currently_playing = false; }
+  void pause();
 
   /** Play the animation. */
-  void play() { is_currently_playing = true; }
+  void play();
 
   /** Reset the animation to the first frame. */
-  void reset() { current_frame = 0; }
+  void reset();
 
   /** Stop the animation. */
-  void stop() {
-    is_currently_playing = false;
-    current_frame = 0;
-    time_since_last_frame_ms = 0.f;
-  }
+  void stop();
 
   /** Update the animation. */
-  void update(float delta_time_ms) {
-    if (frames.empty() || !is_currently_playing) {
-      return;
-    }
-
-    time_since_last_frame_ms += delta_time_ms;
-
-    if (time_since_last_frame_ms >= frame_duration_ms) {
-      time_since_last_frame_ms = 0.f;
-      current_frame = (current_frame + 1) % frames.size();
-
-      if (current_frame == 0 && !should_loop) {
-        is_currently_playing = false;
-      }
-    }
-  }
+  void update(float delta_time_ms);
 
   /** The duration of each frame. Defaults to 24 FPS. */
   float frame_duration_ms = 1000.f / 24.f;
@@ -118,88 +88,5 @@ private:
   /** The time since the last frame was displayed. */
   float time_since_last_frame_ms = 0.f;
 };
-
-// /**
-//  * A node is an abstract class representing a state in the state machine.
-//  */
-// class Node {
-// public:
-//   virtual ~Node() = default;
-
-//   virtual void update(float delta_time) = 0;
-// };
-
-// /**
-//  * An animation node plays an animation when activated.
-//  */
-// class AnimationNode : public Node {
-// public:
-//   AnimationNode(std::unique_ptr<Animation> animation) : animation(std::move(animation)) {}
-
-//   void update(float delta_time) override { animation->update(delta_time); }
-
-// private:
-//   /** The animation to play when this node is activated. */
-//   std::unique_ptr<Animation> animation;
-// };
-
-// /**
-//  * An edge connects two nodes in a state machine.
-//  */
-// class Edge {
-// public:
-//   Edge(std::weak_ptr<Node> destination, std::weak_ptr<Node> source) : destination(destination), source(source) {}
-
-//   void set_condition(std::function<bool()> condition) { this->condition = condition; }
-
-//   bool should_transition() { return condition(); }
-
-//   /** The end node. */
-//   std::weak_ptr<Node> destination;
-
-//   /** The start node. */
-//   std::weak_ptr<Node> source;
-
-// private:
-//   /** The condition upon which this edge should transition from source to destination. */
-//   std::function<bool()> condition;
-// };
-
-// /**
-//  * A state machine controls the current animation being played.
-//  */
-// class StateMachine {
-
-// public:
-//   void add_edge(std::weak_ptr<Node> destination, std::weak_ptr<Node> source) {
-//     edges.emplace_back(destination, source);
-//   }
-
-//   void add_node(Node node) { nodes.push_back(node); }
-
-//   void start() {}
-
-//   void stop() {}
-
-//   void update(float delta_time) {
-//     for (auto& edge : edges) {
-//       if (current_node.lock() == edge.source.lock() && edge.should_transition()) {
-//         current_node = edge.destination;
-//       }
-
-//       current_node.lock()->update(delta_time);
-//     }
-//   }
-
-// private:
-//   /** The current node in the state machine. */
-//   std::weak_ptr<Node> current_node;
-
-//   /** The edges connecting the nodes in the state machine. */
-//   std::vector<Edge> edges;
-
-//   /** The nodes (states) of the state machine. */
-//   std::vector<Node> nodes;
-// };
 
 } // namespace Cairn::Animation

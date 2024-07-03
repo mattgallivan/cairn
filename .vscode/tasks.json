@@ -12,42 +12,36 @@
                 "cwd": "${workspaceFolder}/build"
             },
             "group": "build",
-            "problemMatcher": ["$gcc"],
-            "detail": "Configure the project using CMake."
+            "problemMatcher": [
+                "$gcc"
+            ]
         },
         {
-            "label": "Build Sample",
+            "label": "Build Tests",
             "type": "shell",
             "command": "make",
             "args": [
-                "${input:sampleName}_sample"
+                "tests"
             ],
             "options": {
                 "cwd": "${workspaceFolder}/build"
             },
             "group": "build",
             "dependsOn": "Configure CMake",
-            "problemMatcher": ["$gcc"],
-            "detail": "Build the specified sample."
+            "problemMatcher": [
+                "$gcc"
+            ]
         },
         {
-            "label": "Run Sample",
+            "label": "Run Tests",
             "type": "shell",
-            "command": "${workspaceFolder}/build/samples/${input:sampleName}_sample",
+            "command": "${workspaceFolder}/build/tests",
             "group": {
                 "kind": "test",
                 "isDefault": true
             },
             "problemMatcher": [],
-            "detail": "Run the specified sample."
-        }
-    ],
-    "inputs": [
-        {
-            "id": "sampleName",
-            "type": "promptString",
-            "description": "Enter the sample name",
-            "default": "animation"
+            "dependsOn": "Build Tests"
         }
     ]
 }

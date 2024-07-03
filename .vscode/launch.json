@@ -2,13 +2,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch Sample",
+            "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/samples/${input:sampleName}_sample",
+            "program": "enter program name, for example ${workspaceFolder}/a.out",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
+            "cwd": "${fileDirname}",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
@@ -17,27 +17,13 @@
                     "description": "Enable pretty-printing for gdb",
                     "text": "-enable-pretty-printing",
                     "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
                 }
-            ],
-            "preLaunchTask": "Build Sample",
-            "miDebuggerPath": "/usr/bin/gdb",
-            "miDebuggerArgs": "",
-            "logging": {
-                "exceptions": true,
-                "moduleLoad": true,
-                "programOutput": true,
-                "engineLogging": true,
-                "trace": true,
-                "traceResponse": true
-            }
+            ]
         }
     ],
-    "inputs": [
-        {
-            "id": "sampleName",
-            "type": "promptString",
-            "description": "Enter the sample name",
-            "default": "animation"
-        }
-    ]
 }

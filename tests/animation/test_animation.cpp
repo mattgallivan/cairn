@@ -1,11 +1,12 @@
 #include "engine.h"
+
 #include <gtest/gtest.h>
 
 using namespace Cairn::Animation;
 
 TEST(AnimationTest, PlayPauseStopReset) {
-  std::shared_ptr<Image> image = std::make_shared<Image>();
-  Frame frame(image.get());
+  Image image;
+  Frame frame(&image);
   std::vector<Frame> frames = {frame, frame, frame};
   Animation animation(frames);
 
@@ -26,8 +27,8 @@ TEST(AnimationTest, PlayPauseStopReset) {
 }
 
 TEST(AnimationTest, Update) {
-  std::shared_ptr<Image> image = std::make_shared<Image>();
-  Frame frame(image.get());
+  Image image;
+  Frame frame(&image);
   std::vector<Frame> frames = {frame, frame, frame};
   Animation animation(frames);
 
@@ -43,8 +44,8 @@ TEST(AnimationTest, Update) {
 }
 
 TEST(AnimationTest, Looping) {
-  std::shared_ptr<Image> image = std::make_shared<Image>();
-  Frame frame(image.get());
+  Image image;
+  Frame frame(&image);
   std::vector<Frame> frames = {frame, frame, frame};
   Animation animation(frames);
   animation.should_loop = true;
