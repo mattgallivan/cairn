@@ -1,10 +1,10 @@
 #include "window.h"
 
-#include "log.h"
+#include "log/log.h"
 
 #include <iostream>
 
-namespace Cairn {
+namespace Cairn::Window {
 
 Window::Window(int width, int height, std::string title) {
   this->width = width;
@@ -155,4 +155,4 @@ void Window::mouse_position_callback(GLFWwindow* window, double xpos, double ypo
   }
 }
 
-} // namespace Cairn
+} // namespace Cairn::Window

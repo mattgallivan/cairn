@@ -1,6 +1,6 @@
 #pragma once
 
-#include "input.h"
+#include "input/input.h"
 
 #include <GL/glew.h> // This is included before GLFW to avoid a compile error.
 #include <GLFW/glfw3.h>
@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-namespace Cairn {
+namespace Cairn::Window {
 
 /** A window for displaying graphics and polling for input. */
 class Window {
@@ -99,4 +99,4 @@ private:
   GLFWwindow* window;
 };
 
-} // namespace Cairn
+} // namespace Cairn::Window

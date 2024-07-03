@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-#include "log.h"
+#include "log/log.h"
 
 namespace Cairn {
 
