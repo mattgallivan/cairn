@@ -3,11 +3,14 @@
 #include <vector>
 
 using namespace Cairn::Animation;
+using namespace Cairn::Graphics;
 using namespace Cairn::Window;
 
 int main() {
   Window window(800, 600, "Cairn - Animation Sample");
   window.show();
+
+  Graphics graphics(window);
 
   std::vector<Frame> frames;
   std::unique_ptr<Animation> animation(std::make_unique<Animation>(frames));

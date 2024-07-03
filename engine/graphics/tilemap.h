@@ -1,6 +1,6 @@
 #pragma once
 
-#include "log.h"
+#include "log/log.h"
 #include "texture.h"
 
 #include <glm/glm.hpp>

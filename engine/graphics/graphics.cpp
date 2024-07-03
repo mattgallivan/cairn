@@ -1,6 +1,6 @@
 #include "graphics.h"
 
-#include "log.h"
+#include "log/log.h"
 
 #include <GL/glew.h>
 #include <glm/gtc/type_ptr.hpp>
@@ -8,9 +8,9 @@
 #include <algorithm>
 #include <string>
 
-namespace Cairn {
+namespace Cairn::Graphics {
 
-Graphics::Graphics(Window& window) {
+Graphics::Graphics(Window::Window& window) {
   glfwMakeContextCurrent(window.get_glfw_window());
   glewExperimental = GL_TRUE;
   GLenum err = glewInit();
@@ -279,4 +279,4 @@ void Graphics::draw(Shader& shader, Camera& camera, Tilemap& tilemap) {
   glDeleteBuffers(1, &vbo);
 }
 
-} // namespace Cairn
+} // namespace Cairn::Graphics

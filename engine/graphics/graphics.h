@@ -5,17 +5,18 @@
 #include "sprite.h"
 #include "texture.h"
 #include "tilemap.h"
-#include "window.h"
+
+#include "window/window.h"
 
 #include <unordered_map>
 
-namespace Cairn {
+namespace Cairn::Graphics {
 
 /** A graphics class that handles rendering. */
 class Graphics {
 
 public:
-  Graphics(Window& window);
+  Graphics(Window::Window& window);
 
   ~Graphics();
 
@@ -49,4 +50,4 @@ private:
   std::unordered_map<std::string, GLuint> textures;
 };
 
-} // namespace Cairn
+} // namespace Cairn::Graphics

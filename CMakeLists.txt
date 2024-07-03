@@ -29,10 +29,11 @@ include_directories(${FREETYPE_INCLUDE_DIRS})
 
 # Source files (commented out for now)
 set(ENGINE_SOURCES
-  engine/engine.cpp
-  
   engine/animation/animation.cpp
   engine/animation/node.cpp
+
+  engine/graphics/graphics.cpp
+  engine/graphics/sprite.cpp
 
   engine/input/input_manager.cpp
   engine/input/input_profile.cpp
