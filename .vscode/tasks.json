@@ -16,6 +16,34 @@
                 "$gcc"
             ]
         },
+        // --- SAMPLES ---
+        {
+            "label": "Build Sample",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "${input:sampleName}"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "dependsOn": "Configure CMake"
+        },
+        {
+            "label": "Run Sample",
+            "type": "shell",
+            "command": "${workspaceFolder}/build/${input:sampleName}",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [],
+            "dependsOn": "Build Sample"
+        },
+        // --- TESTS ---
         {
             "label": "Build Tests",
             "type": "shell",
@@ -42,6 +70,14 @@
             },
             "problemMatcher": [],
             "dependsOn": "Build Tests"
+        }
+    ],
+    "inputs": [
+        {
+            "id": "sampleName",
+            "type": "promptString",
+            "description": "Enter the sample name",
+            "default": "animation"
         }
     ]
 }

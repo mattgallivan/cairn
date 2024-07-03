@@ -59,6 +59,18 @@ target_link_libraries(engine PUBLIC
   stdc++fs
 )
 
+# --- SAMPLES ---
+
+set(SAMPLE_SOURCES
+  samples/animation.cpp
+)
+
+foreach(SAMPLE_SOURCE ${SAMPLE_SOURCES})
+  get_filename_component(SAMPLE_NAME ${SAMPLE_SOURCE} NAME_WE)
+  add_executable(${SAMPLE_NAME} ${SAMPLE_SOURCE})
+  target_link_libraries(${SAMPLE_NAME} PRIVATE engine)
+endforeach()
+
 # --- TESTS ---
 
 enable_testing()
