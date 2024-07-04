@@ -43,7 +43,7 @@ class Animation {
 public:
   Animation() = default;
 
-  explicit Animation(const std::vector<Frame>& frames) : frames(frames) {}
+  explicit Animation(const std::vector<Frame>&& frames) : frames(frames) {}
 
   /** Get the frame at the given index. */
   const Frame& at(int index) const;
