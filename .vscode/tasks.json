@@ -94,6 +94,52 @@
             "command": "${workspaceFolder}/build/tests",
             "problemMatcher": [],
             "dependsOn": "Build Tests"
+        },
+        // --- COVERAGE ---
+        {
+            "label": "Capture Coverage",
+            "group": "test",
+            "type": "shell",
+            "command": "lcov",
+            "args": [
+                "--capture",
+                "--directory",
+                ".",
+                "--output-file",
+                "lcov.info"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            },
+            "problemMatcher": [],
+            "dependsOn": "Run Tests"
+        },
+        {
+            "label": "Generate Coverage Report",
+            "group": "test",
+            "type": "shell",
+            "command": "genhtml",
+            "args": [
+                "coverage.info",
+                "--output-directory",
+                "coverage"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            },
+            "problemMatcher": [],
+            "dependsOn": "Capture Coverage"
+        },
+        {
+            "label": "Open Coverage Report",
+            "group": "test",
+            "type": "shell",
+            "command": "xdg-open",
+            "args": [
+                "${workspaceFolder}/build/coverage/index.html"
+            ],
+            "problemMatcher": [],
+            "dependsOn": "Generate Coverage Report"
         }
     ],
     "inputs": [
