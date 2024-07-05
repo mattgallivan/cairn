@@ -43,7 +43,7 @@ int main() {
 
   // Run the game loop.
   while (window.is_open()) {
-    animation_system.update(component, 16.f);
+    animation_system.update(component);
     animation_renderer.render(component);
     window.refresh();
   }
