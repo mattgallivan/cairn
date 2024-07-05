@@ -1,7 +1,1 @@
-## Tests
-
-`./test.sh`
-
-## Samples
-
-`./sample.sh window`
+[![codecov](https://codecov.io/github/mattgallivan/cairn/graph/badge.svg?token=4U0HB2DFKB)](https://codecov.io/github/mattgallivan/cairn)
