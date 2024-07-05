@@ -34,6 +34,9 @@ set(ENGINE_SOURCES
   engine/animation/animation.cpp
   engine/animation/node.cpp
 
+  engine/ecs/entity.cpp
+  engine/ecs/system.cpp
+
   engine/graphics/graphics.cpp
   engine/graphics/sprite.cpp
 
@@ -92,6 +95,7 @@ enable_testing()
 
 set(TEST_SOURCES
   tests/animation/test_animation.cpp
+  tests/ecs/test_ecs.cpp
 )
 
 add_executable(tests ${TEST_SOURCES})
@@ -106,4 +110,4 @@ target_link_libraries(tests PRIVATE
   GTest::gtest_main  
 )
 
-add_test(NAME AnimationTest COMMAND tests)
+add_test(NAME ECSTEST COMMAND tests)

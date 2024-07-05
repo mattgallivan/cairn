@@ -4,6 +4,7 @@
 #include <vector>
 
 using namespace Cairn::Animation;
+using namespace Cairn::ECS;
 using namespace Cairn::Graphics;
 using namespace Cairn::Window;
 
@@ -33,18 +34,22 @@ int main() {
     image2.pixels[i] = (i % 5 == 0) ? 0xFF00FF00 : 0xFF0000FF; // [B, G, R, A]
   }
 
-  // Create the animation.
+  // Create the animation and the entity.
   std::vector<Frame> frames = {Frame(&image), Frame(&image2)};
   auto animation = std::make_unique<Animation>(std::move(frames));
   animation->should_loop = true;
   animation->play();
   auto node = std::make_unique<AnimationNode>(std::move(animation));
-  Cairn::Animation::Component component(std::move(node));
+
+  Entity entity;
+  auto* animation_component = entity.add_component<Cairn::Animation::Component>(std::move(node));
+  animation_system.add_entity(&entity);
+  animation_renderer.add_entity(&entity);
 
   // Run the game loop.
   while (window.is_open()) {
-    animation_system.update(component);
-    animation_renderer.render(component);
+    animation_system.update();
+    animation_renderer.update();
     window.refresh();
   }
 
