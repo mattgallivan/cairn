@@ -6,6 +6,8 @@
 #include "texture.h"
 #include "tilemap.h"
 
+#include "image/image.h"
+
 #include "window/window.h"
 
 #include <unordered_map>
@@ -38,6 +40,8 @@ public:
   void draw(Shader& shader, Camera& camera, std::vector<Sprite*>& sprites);
 
   void draw(Shader& shader, Camera& camera, Tilemap& tilemap);
+
+  void draw(Image* image) const;
 
 private:
   /** The mesh cache. */

@@ -34,6 +34,8 @@ public:
 
   void update(float delta_time_ms) override;
 
+  Animation* get_animation() const;
+
 private:
   /** The animation to play when this node is activated. */
   std::unique_ptr<Animation> animation;

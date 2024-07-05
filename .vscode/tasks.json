@@ -1,51 +1,81 @@
 {
     "version": "2.0.0",
     "tasks": [
+        // --- CLEAN ---
+        {
+            "label": "Clean",
+            "group": "none",
+            "type": "shell",
+            "command": "rm",
+            "args": [
+                "-rf",
+                "${workspaceFolder}/build"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        },
+        // --- CMAKE ---
+        {
+            "label": "Create Build Directory",
+            "group": "none",
+            "type": "shell",
+            "command": "mkdir",
+            "args": [
+                "-p",
+                "${workspaceFolder}/build"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        },
         {
             "label": "Configure CMake",
+            "group": "build",
             "type": "shell",
             "command": "cmake",
             "args": [
+                "-DCMAKE_BUILD_TYPE=Debug",
                 ".."
             ],
             "options": {
                 "cwd": "${workspaceFolder}/build"
             },
-            "group": "build",
-            "problemMatcher": [
-                "$gcc"
-            ]
+            "problemMatcher": "$gcc",
+            "dependsOn": "Create Build Directory"
         },
         // --- SAMPLES ---
         {
             "label": "Build Sample",
+            "group": "build",
             "type": "shell",
             "command": "make",
             "args": [
-                "${input:sampleName}"
+                "${input:sample}"
             ],
             "options": {
                 "cwd": "${workspaceFolder}/build"
             },
-            "problemMatcher": [
-                "$gcc"
-            ],
+            "problemMatcher": "$gcc",
             "dependsOn": "Configure CMake"
         },
         {
             "label": "Run Sample",
-            "type": "shell",
-            "command": "${workspaceFolder}/build/${input:sampleName}",
             "group": {
-                "kind": "build",
+                "kind": "test",
                 "isDefault": true
             },
+            "type": "shell",
+            "command": "${workspaceFolder}/build/${input:sample}",
             "problemMatcher": [],
             "dependsOn": "Build Sample"
         },
         // --- TESTS ---
         {
             "label": "Build Tests",
+            "group": "build",
             "type": "shell",
             "command": "make",
             "args": [
@@ -54,27 +84,21 @@
             "options": {
                 "cwd": "${workspaceFolder}/build"
             },
-            "group": "build",
             "dependsOn": "Configure CMake",
-            "problemMatcher": [
-                "$gcc"
-            ]
+            "problemMatcher": "$gcc"
         },
         {
             "label": "Run Tests",
+            "group": "test",
             "type": "shell",
             "command": "${workspaceFolder}/build/tests",
-            "group": {
-                "kind": "test",
-                "isDefault": true
-            },
             "problemMatcher": [],
             "dependsOn": "Build Tests"
         }
     ],
     "inputs": [
         {
-            "id": "sampleName",
+            "id": "sample",
             "type": "promptString",
             "description": "Enter the sample name",
             "default": "animation"

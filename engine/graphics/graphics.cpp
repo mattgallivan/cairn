@@ -8,6 +8,8 @@
 #include <algorithm>
 #include <string>
 
+#include <iostream>
+
 namespace Cairn::Graphics {
 
 Graphics::Graphics(Window::Window& window) {
@@ -277,6 +279,139 @@ void Graphics::draw(Shader& shader, Camera& camera, Tilemap& tilemap) {
   }
 
   glDeleteBuffers(1, &vbo);
+}
+
+void Graphics::draw(Image* image) const {
+  if (!image || !image->pixels) {
+    Log::error(Log::Category::Graphics, "Image is null or has no pixels.");
+    return;
+  }
+
+  // Shader source code
+  const char* vertexShaderSource = R"(
+    #version 330 core
+    layout(location = 0) in vec2 aPos;
+    layout(location = 1) in vec2 aTexCoord;
+
+    out vec2 TexCoord;
+
+    void main() {
+        gl_Position = vec4(aPos, 0.0, 1.0);
+        TexCoord = aTexCoord;
+    }
+    )";
+
+  const char* fragmentShaderSource = R"(
+    #version 330 core
+    out vec4 FragColor;
+
+    in vec2 TexCoord;
+
+    uniform sampler2D texture1;
+
+    void main() {
+        FragColor = texture(texture1, TexCoord);
+    }
+    )";
+
+  // Compile and link shaders
+  GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+  glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr);
+  glCompileShader(vertexShader);
+
+  int success;
+  char infoLog[512];
+  glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+  if (!success) {
+    glGetShaderInfoLog(vertexShader, 512, nullptr, infoLog);
+    std::cerr << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+  }
+
+  GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+  glShaderSource(fragmentShader, 1, &fragmentShaderSource, nullptr);
+  glCompileShader(fragmentShader);
+
+  glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+  if (!success) {
+    glGetShaderInfoLog(fragmentShader, 512, nullptr, infoLog);
+    std::cerr << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+  }
+
+  GLuint shaderProgram = glCreateProgram();
+  glAttachShader(shaderProgram, vertexShader);
+  glAttachShader(shaderProgram, fragmentShader);
+  glLinkProgram(shaderProgram);
+
+  glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+  if (!success) {
+    glGetProgramInfoLog(shaderProgram, 512, nullptr, infoLog);
+    std::cerr << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+  }
+
+  glDeleteShader(vertexShader);
+  glDeleteShader(fragmentShader);
+
+  // Load and create a texture
+  GLuint textureID;
+  glGenTextures(1, &textureID);
+  glBindTexture(GL_TEXTURE_2D, textureID);
+  glTexImage2D(GL_TEXTURE_2D, 0, image->num_channels == 4 ? GL_RGBA : GL_RGB, image->width, image->height, 0,
+               image->num_channels == 4 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, image->pixels);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+  // Vertex data
+  float vertices[] = {
+      // positions    // texCoords
+      -1.0f, -1.0f, 0.0f, 0.0f, // bottom left
+      1.0f,  -1.0f, 1.0f, 0.0f, // bottom right
+      1.0f,  1.0f,  1.0f, 1.0f, // top right
+      -1.0f, 1.0f,  0.0f, 1.0f  // top left
+  };
+
+  unsigned int indices[] = {
+      0, 1, 2, // first triangle
+      2, 3, 0  // second triangle
+  };
+
+  GLuint VBO, VAO, EBO;
+  glGenVertexArrays(1, &VAO);
+  glGenBuffers(1, &VBO);
+  glGenBuffers(1, &EBO);
+
+  glBindVertexArray(VAO);
+
+  glBindBuffer(GL_ARRAY_BUFFER, VBO);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+  glEnableVertexAttribArray(0);
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+  glEnableVertexAttribArray(1);
+
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, textureID);
+  glUniform1i(glGetUniformLocation(shaderProgram, "texture1"), 0);
+
+  glUseProgram(shaderProgram);
+
+  // Draw
+  glBindVertexArray(VAO);
+  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+  // Cleanup
+  glBindVertexArray(0);
+  glBindTexture(GL_TEXTURE_2D, 0);
+  glDeleteVertexArrays(1, &VAO);
+  glDeleteBuffers(1, &VBO);
+  glDeleteBuffers(1, &EBO);
+  glDeleteTextures(1, &textureID);
+  glDeleteProgram(shaderProgram);
 }
 
 } // namespace Cairn::Graphics

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "resource.h"
+#include "resource/resource.h"
 
 #include <string>
 

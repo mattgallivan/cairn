@@ -1,11 +1,11 @@
 #pragma once
 
+#include "image/image.h"
+
 #include <functional>
 #include <memory>
 #include <stdexcept>
 #include <vector>
-
-struct Image {};
 
 namespace Cairn::Animation {
 
@@ -46,10 +46,10 @@ public:
   explicit Animation(const std::vector<Frame>&& frames) : frames(frames) {}
 
   /** Get the frame at the given index. */
-  const Frame& at(int index) const;
+  const Frame* at(int index) const;
 
   /** Get the current frame being displayed. */
-  const Frame& get_current_frame() const;
+  const Frame* get_current_frame() const;
 
   /** Returns true if the animation is currently playing. */
   bool is_playing() const;

@@ -6,9 +6,11 @@ project(Cairn)
 cmake_policy(SET CMP0072 NEW)
 set(OpenGL_GL_PREFERENCE GLVND)
 
-# Specify C++ standard
+set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g")
 
 # Find packages
 find_package(GTest CONFIG REQUIRED)
@@ -35,10 +37,14 @@ set(ENGINE_SOURCES
   engine/graphics/graphics.cpp
   engine/graphics/sprite.cpp
 
+  engine/image/image.cpp
+
   engine/input/input_manager.cpp
   engine/input/input_profile.cpp
 
   engine/log/log.cpp
+
+  engine/resource/resource.cpp
 
   engine/window/window.cpp
   # engine/graphics/graphics.cpp

@@ -1,6 +1,6 @@
 #include "resource.h"
 
-#include "log.h"
+#include "log/log.h"
 
 #include <stb/stb_image.h>
 

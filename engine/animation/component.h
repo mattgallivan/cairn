@@ -8,16 +8,12 @@
 namespace Cairn::Animation {
 
 /** An animation component can be used by a game object to run animation logic. */
-class Component : ECS::Component {
+class Component : public ECS::Component {
 
 public:
   Component(std::unique_ptr<Node>&& node) : node(std::move(node)) {}
 
-  void start() override { node->start(); }
-
-  void stop() override { node->stop(); }
-
-  void update(float delta_time_ms) override { node->update(delta_time_ms); }
+  Node* get_node() const { return node.get(); }
 
 private:
   std::unique_ptr<Node> node;

@@ -5,10 +5,10 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "enter program name, for example ${workspaceFolder}/a.out",
+            "program": "${workspaceFolder}/build/${input:sample}",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${fileDirname}",
+            "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
@@ -23,7 +23,16 @@
                     "text": "-gdb-set disassembly-flavor intel",
                     "ignoreFailures": true
                 }
-            ]
+            ],
+            "preLaunchTask": "Build Sample"
         }
     ],
+    "inputs": [
+        {
+            "id": "sample",
+            "type": "promptString",
+            "description": "Enter the sample name",
+            "default": "animation"
+        }
+    ]
 }

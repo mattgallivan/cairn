@@ -1,20 +1,18 @@
 #include "animation.h"
 
+#include "log/log.h"
+
 namespace Cairn::Animation {
 
-const Frame& Animation::at(int index) const {
+const Frame* Animation::at(int index) const {
   if (index < 0 || index >= frames.size()) {
-    throw std::out_of_range("Index out of range.");
+    Log::warn(Log::Category::Animation, "Frame index out of bounds.");
+    return nullptr;
   }
-  return frames.at(index);
+  return &frames[index];
 }
 
-const Frame& Animation::get_current_frame() const {
-  if (frames.empty()) {
-    throw std::out_of_range("No frames in animation.");
-  }
-  return at(current_frame);
-}
+const Frame* Animation::get_current_frame() const { return at(current_frame); }
 
 bool Animation::is_playing() const { return is_currently_playing; }
 

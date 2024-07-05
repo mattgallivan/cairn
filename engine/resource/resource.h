@@ -1,7 +1,7 @@
 #pragma once
 
-#include "serializable.h"
-#include "texture.h"
+#include "graphics/texture.h"
+#include "io/serializable.h"
 
 #include <iostream>
 #include <memory>
