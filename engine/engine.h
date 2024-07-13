@@ -12,4 +12,6 @@
 
 #include "image/image.h"
 
+#include "resource/system.h"
+
 #include "window/window.h"
