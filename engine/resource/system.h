@@ -1,17 +1,14 @@
 #pragma once
 
-#include "ecs/system.h"
 #include "image/image.h"
 
 #include <memory>
 
 namespace Cairn::Resources {
 
-class System : ECS::System {
+class Manager {
 
 public:
-  void update(float delta_time_ms = 33.33f) override {}
-
   Image* load_image(const std::string& file_path) {
     auto image = std::make_unique<Image>();
     image->load(file_path);

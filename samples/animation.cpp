@@ -18,9 +18,9 @@ int main() {
   Renderer animation_renderer(graphics);
 
   // Load the images to animate.
-  Cairn::Resources::System resource_system;
-  Cairn::Image* image = resource_system.load_image("samples/assets/animation/wolfsheet1.png");
-  Cairn::Image* image2 = resource_system.load_image("samples/assets/animation/wolfsheet2.png");
+  Cairn::Resources::Manager resource_manager;
+  Cairn::Image* image = resource_manager.load_image("samples/assets/animation/wolfsheet1.png");
+  Cairn::Image* image2 = resource_manager.load_image("samples/assets/animation/wolfsheet2.png");
 
   // Create the animation and the entity.
   std::vector<Frame> frames = {Frame(image), Frame(image2)};
