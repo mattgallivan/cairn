@@ -49,6 +49,7 @@ include_directories(${FREETYPE_INCLUDE_DIRS})
 set(ENGINE_SOURCES
   engine/animation/animation.cpp
   engine/animation/node.cpp
+  engine/animation/system.cpp
 
   engine/ecs/entity.cpp
   engine/ecs/system.cpp
