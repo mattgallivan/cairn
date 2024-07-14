@@ -7,7 +7,7 @@
 namespace Cairn {
 
 /** An image resource. */
-class Image : public Resource {
+class Image : public Resources::Resource {
 
 public:
   Image() : width(0), height(0), num_channels(0), pixels(nullptr) {}

@@ -7,7 +7,7 @@
 #include <memory>
 #include <string>
 
-namespace Cairn {
+namespace Cairn::Resources {
 
 /** Base class for all resources that can be used by the engine.
  *  Resources are identified by their ID, which is unique for each resource.
@@ -49,4 +49,4 @@ protected:
   State state;
 };
 
-}; // namespace Cairn
+}; // namespace Cairn::Resources

@@ -7,7 +7,7 @@
 #include <fstream>
 #include <iostream>
 
-namespace Cairn {
+namespace Cairn::Resources {
 
 int Resource::next_id = 0;
 
@@ -44,4 +44,4 @@ Texture* Resource::load_texture(const std::string& file_path) {
   return texture;
 }
 
-} // namespace Cairn
+} // namespace Cairn::Resources
