@@ -28,7 +28,7 @@ jobs:
     - name: Capture Coverage
       run: |
         lcov --capture --directory . --output-file build/lcov.info
-        lcov --remove build/lcov.info '*/lib/*' --output-file build/lcov.info
+        lcov --remove build/lcov.info '*/lib/*' '*/tests/*' --output-file build/lcov.info
 
     - name: Upload Coverage to Codecov
       uses: codecov/codecov-action@v2
