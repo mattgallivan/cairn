@@ -1,5 +1,6 @@
 #pragma once
 
+#include "io/serializable.h"
 #include "resource/resource.h"
 
 #include <string>
@@ -7,7 +8,7 @@
 namespace Cairn {
 
 /** An image resource. */
-class Image : public Resources::Resource {
+class Image : public Resources::Resource, public Serializable {
 
 public:
   Image() : width(0), height(0), num_channels(0), pixels(nullptr) {}

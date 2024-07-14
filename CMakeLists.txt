@@ -113,6 +113,7 @@ enable_testing()
 set(TEST_SOURCES
   tests/animation/test_animation.cpp
   tests/ecs/test_ecs.cpp
+  tests/resource/test_resource.cpp
 )
 
 add_executable(tests ${TEST_SOURCES})

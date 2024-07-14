@@ -50,18 +50,14 @@ bool Image::save(const std::string& file_path) const {
 }
 
 bool Image::load(const std::string& file_path) {
-  state = State::Loading;
-
   stbi_set_flip_vertically_on_load(true);
   pixels = stbi_load(file_path.c_str(), &width, &height, &num_channels, 0);
 
   if (!pixels) {
     Log::error(Log::Category::Resource, std::string("Failed to load image: ") + file_path);
-    state = State::Failed;
     return false;
   }
 
-  state = State::Loaded;
   return true;
 }
 
