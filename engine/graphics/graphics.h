@@ -6,7 +6,7 @@
 #include "texture.h"
 #include "tilemap.h"
 
-#include "image/image.h"
+#include "image.h"
 
 #include "window/window.h"
 

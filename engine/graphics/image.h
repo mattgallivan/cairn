@@ -5,7 +5,7 @@
 
 #include <string>
 
-namespace Cairn {
+namespace Cairn::Graphics {
 
 /** An image resource. */
 class Image : public Resources::Resource, public Serializable {
@@ -34,4 +34,4 @@ public:
   unsigned char* pixels;
 };
 
-} // namespace Cairn
+} // namespace Cairn::Graphics

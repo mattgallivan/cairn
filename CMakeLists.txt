@@ -55,9 +55,8 @@ set(ENGINE_SOURCES
   engine/ecs/system.cpp
 
   engine/graphics/graphics.cpp
+  engine/graphics/image.cpp
   engine/graphics/sprite.cpp
-
-  engine/image/image.cpp
 
   engine/input/input_manager.cpp
   engine/input/input_profile.cpp

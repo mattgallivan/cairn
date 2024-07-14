@@ -3,9 +3,10 @@
 #include <gtest/gtest.h>
 
 using namespace Cairn::Animation;
+using namespace Cairn::Graphics;
 
 TEST(AnimationTest, PlayPauseStopReset) {
-  Cairn::Image image;
+  Image image;
   Frame frame(&image);
   std::vector<Frame> frames = {frame, frame, frame};
   Animation animation(std::move(frames));
@@ -27,7 +28,7 @@ TEST(AnimationTest, PlayPauseStopReset) {
 }
 
 TEST(AnimationTest, Update) {
-  Cairn::Image image;
+  Image image;
   Frame frame(&image);
   std::vector<Frame> frames = {frame, frame, frame};
   Animation animation(std::move(frames));
@@ -44,7 +45,7 @@ TEST(AnimationTest, Update) {
 }
 
 TEST(AnimationTest, Looping) {
-  Cairn::Image image;
+  Image image;
   Frame frame(&image);
   std::vector<Frame> frames = {frame, frame, frame};
   Animation animation(std::move(frames));

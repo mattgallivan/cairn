@@ -9,8 +9,7 @@
 #include "ecs/entity.h"
 
 #include "graphics/graphics.h"
-
-#include "image/image.h"
+#include "graphics/image.h"
 
 #include "resource/manager.h"
 

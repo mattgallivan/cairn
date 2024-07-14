@@ -1,6 +1,6 @@
 #pragma once
 
-#include "image/image.h"
+#include "graphics/image.h"
 
 #include <functional>
 #include <memory>
@@ -21,10 +21,10 @@ struct Frame {
 
   Frame() = default;
 
-  explicit Frame(Image* image) : image(image) {}
+  explicit Frame(Graphics::Image* image) : image(image) {}
 
   /** The image this frame will display. */
-  Image* image;
+  Graphics::Image* image;
 
   bool operator==(const Frame& other) const { return image == other.image; }
 };

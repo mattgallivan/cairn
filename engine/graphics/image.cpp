@@ -12,7 +12,7 @@
 
 using Cairn::Log;
 
-namespace Cairn {
+namespace Cairn::Graphics {
 
 Image::~Image() {
   if (pixels) {
@@ -61,4 +61,4 @@ bool Image::load(const std::string& file_path) {
   return true;
 }
 
-} // namespace Cairn
+} // namespace Cairn::Graphics
