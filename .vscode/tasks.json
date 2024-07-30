@@ -147,7 +147,7 @@
             "id": "sample",
             "type": "promptString",
             "description": "Enter the sample name",
-            "default": "animation"
+            "default": "audio"
         }
     ]
 }

@@ -97,6 +97,7 @@ target_link_libraries(engine PUBLIC
 
 set(SAMPLE_SOURCES
   samples/animation.cpp
+  samples/audio.cpp
 )
 
 foreach(SAMPLE_SOURCE ${SAMPLE_SOURCES})
