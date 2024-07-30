@@ -19,11 +19,15 @@ int main() {
 
   // Load the images to animate.
   Cairn::Resources::Manager resource_manager;
-  Image* image = resource_manager.load_image("samples/assets/animation/wolfsheet1.png");
-  Image* image2 = resource_manager.load_image("samples/assets/animation/wolfsheet2.png");
+  Spritesheet* spritesheet = resource_manager.load_spritesheet("samples/assets/animation/flame_spritesheet.png");
 
   // Create the animation and the entity.
-  std::vector<Frame> frames = {Frame(image), Frame(image2)};
+  Region region = spritesheet->get_region("flame0.png");
+  Region region2 = spritesheet->get_region("flame1.png");
+  Region region3 = spritesheet->get_region("flame2.png");
+  std::vector<Frame> frames = {Frame(spritesheet, region.x, region.y, region.w, region.h),
+                               Frame(spritesheet, region2.x, region2.y, region2.w, region2.h),
+                               Frame(spritesheet, region3.x, region3.y, region3.w, region3.h)};
   auto animation = std::make_unique<Animation>(std::move(frames));
   animation->should_loop = true;
   animation->play();
@@ -40,6 +44,5 @@ int main() {
     animation_renderer.update();
     window.refresh();
   }
-
   return 0;
 }

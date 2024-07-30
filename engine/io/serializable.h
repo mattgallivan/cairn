@@ -1,5 +1,7 @@
 #pragma once
 
+#include <fstream>
+#include <iostream>
 #include <string>
 
 namespace Cairn {
@@ -11,11 +13,17 @@ class Serializable {
 public:
   virtual ~Serializable() = default;
 
+  /** Serialize the object to a string. */
+  virtual std::string serialize() const = 0;
+
+  /** Deserialize the object from a string. */
+  virtual bool deserialize(const std::string& data) = 0;
+
   /** Save the object to a file. */
-  virtual bool save(const std::string& file_path) const = 0;
+  bool save(const std::string& file_path) const;
 
   /** Load the object from a file. */
-  virtual bool load(const std::string& file_path) = 0;
+  bool load(const std::string& file_path);
 };
 
 } // namespace Cairn

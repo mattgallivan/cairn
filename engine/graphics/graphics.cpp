@@ -281,7 +281,10 @@ void Graphics::draw(Shader& shader, Camera& camera, Tilemap& tilemap) {
   glDeleteBuffers(1, &vbo);
 }
 
-void Graphics::draw(Image* image) const {
+void Graphics::draw(Image* image, int x, int y, int width, int height) {
+  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+  glClear(GL_COLOR_BUFFER_BIT);
+
   if (!image || !image->pixels) {
     Log::error(Log::Category::Graphics, "Image is null or has no pixels.");
     return;
@@ -363,12 +366,17 @@ void Graphics::draw(Image* image) const {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
   // Vertex data
+  float tex_left = x / static_cast<float>(image->width);
+  float tex_right = (x + width) / static_cast<float>(image->width);
+  float tex_top = y / static_cast<float>(image->height);
+  float tex_bottom = (y + height) / static_cast<float>(image->height);
+
   float vertices[] = {
       // positions    // texCoords
-      -1.0f, -1.0f, 0.0f, 0.0f, // bottom left
-      1.0f,  -1.0f, 1.0f, 0.0f, // bottom right
-      1.0f,  1.0f,  1.0f, 1.0f, // top right
-      -1.0f, 1.0f,  0.0f, 1.0f  // top left
+      -1.0f, -1.0f, tex_left,  tex_bottom, // bottom left
+      1.0f,  -1.0f, tex_right, tex_bottom, // bottom right
+      1.0f,  1.0f,  tex_right, tex_top,    // top right
+      -1.0f, 1.0f,  tex_left,  tex_top     // top left
   };
 
   unsigned int indices[] = {

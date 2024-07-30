@@ -20,45 +20,20 @@ Image::~Image() {
   }
 }
 
-bool Image::save(const std::string& file_path) const {
+std::string Image::serialize() const {
   if (!pixels) {
-    Log::error(Log::Category::Resource, std::string("No image data to save for: ") + file_path);
-    return false;
+    Log::error(Log::Category::Resource, "No image data to serialize.");
+    return std::string();
   }
 
-  int success = 0;
-  std::string extension = std::filesystem::path(file_path).extension().string();
-
-  if (extension == ".png") {
-    success = stbi_write_png(file_path.c_str(), width, height, num_channels, pixels, width * num_channels);
-  } else if (extension == ".jpg" || extension == ".jpeg") {
-    int quality = 100;
-    success = stbi_write_jpg(file_path.c_str(), width, height, num_channels, pixels, quality);
-  } else if (extension == ".bmp") {
-    success = stbi_write_bmp(file_path.c_str(), width, height, num_channels, pixels);
-  } else {
-    Log::error(Log::Category::Resource, "Unsupported file format for saving: " + file_path);
-    return false;
-  }
-
-  if (!success) {
-    Log::error(Log::Category::Resource, "Failed to save image: " + file_path);
-    return false;
-  }
-
-  return true;
+  return std::string(reinterpret_cast<const char*>(pixels), width * height * num_channels);
 }
 
-bool Image::load(const std::string& file_path) {
-  stbi_set_flip_vertically_on_load(true);
-  pixels = stbi_load(file_path.c_str(), &width, &height, &num_channels, 0);
-
-  if (!pixels) {
-    Log::error(Log::Category::Resource, std::string("Failed to load image: ") + file_path);
-    return false;
-  }
-
-  return true;
+bool Image::deserialize(const std::string& data) {
+  stbi_image_free(pixels);
+  stbi_load_from_memory(reinterpret_cast<const unsigned char*>(data.c_str()), data.size(), &width, &height,
+                        &num_channels, 0);
+  return pixels != nullptr;
 }
 
 } // namespace Cairn::Graphics

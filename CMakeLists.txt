@@ -20,12 +20,20 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 endif()
 
 # Find packages
+include(FetchContent)
+
+# Fetch nlohmann/json
+FetchContent_Declare(json
+  GIT_REPOSITORY https://github.com/ArthurSonzogni/nlohmann_json_cmake_fetchcontent
+  GIT_PROGRESS TRUE  GIT_SHALLOW TRUE
+  GIT_TAG v3.11.2)
+FetchContent_MakeAvailable(json)
 
 # Download and configure GTest
-include(FetchContent)
 FetchContent_Declare(
   googletest
   URL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip
+  DOWNLOAD_EXTRACT_TIMESTAMP true
 )
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
@@ -49,6 +57,7 @@ include_directories(${FREETYPE_INCLUDE_DIRS})
 set(ENGINE_SOURCES
   engine/animation/animation.cpp
   engine/animation/node.cpp
+  engine/animation/renderer.cpp
   engine/animation/system.cpp
 
   engine/ecs/entity.cpp
@@ -57,9 +66,13 @@ set(ENGINE_SOURCES
   engine/graphics/graphics.cpp
   engine/graphics/image.cpp
   engine/graphics/sprite.cpp
+  engine/graphics/spritesheet.cpp
 
   engine/input/input_manager.cpp
   engine/input/input_profile.cpp
+
+  engine/io/serializable.cpp
+  engine/io/serializable_json.cpp
 
   engine/log/log.cpp
 
@@ -91,6 +104,9 @@ target_link_libraries(engine PUBLIC
   OpenGL::GL
   ${X11_LIBRARIES}
   stdc++fs
+)
+
+target_link_libraries(engine PUBLIC nlohmann_json::nlohmann_json
 )
 
 # --- SAMPLES ---

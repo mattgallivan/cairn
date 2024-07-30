@@ -48,4 +48,8 @@ void Animation::update(float delta_time_ms) {
   }
 }
 
+nlohmann::json Animation::to_json() const { return nlohmann::json(); }
+
+bool Animation::from_json(const nlohmann::json& json) { return false; }
+
 } // namespace Cairn::Animation

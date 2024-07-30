@@ -41,7 +41,7 @@ public:
 
   void draw(Shader& shader, Camera& camera, Tilemap& tilemap);
 
-  void draw(Image* image) const;
+  void draw(Image* image, int x, int y, int width, int height);
 
 private:
   /** The mesh cache. */

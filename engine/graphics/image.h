@@ -15,11 +15,9 @@ public:
 
   ~Image();
 
-  /** Save the image to a file. */
-  bool save(const std::string& file_path) const override;
+  virtual std::string serialize() const override;
 
-  /** Load the image from a file. */
-  bool load(const std::string& file_path) override;
+  virtual bool deserialize(const std::string& data) override;
 
   /** The width of the image. */
   int width;

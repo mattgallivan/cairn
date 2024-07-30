@@ -1,49 +1,31 @@
 #pragma once
 
-#include "graphics/image.h"
+#include "frame.h"
 
-#include <functional>
-#include <memory>
-#include <stdexcept>
+#include "graphics/image.h"
+#include "io/serializable_json.h"
+#include "resource/manager.h"
+#include "resource/resource.h"
+
 #include <vector>
 
 namespace Cairn::Animation {
 
 /**
- * An animation frame is a single image that will be played in an animation.
- *
- * \code
- * Image image;
- * Cairn::Animation::Frame frame(&image);
- * \endcode
- */
-struct Frame {
-
-  Frame() = default;
-
-  explicit Frame(Graphics::Image* image) : image(image) {}
-
-  /** The image this frame will display. */
-  Graphics::Image* image;
-
-  bool operator==(const Frame& other) const { return image == other.image; }
-};
-
-/**
  * An animation is a set of frames to be played in sequence.
  *
- * \code
- * Image image;
- * Cairn::Animation::Frame frame(&image);
- * std::vector<Cairn::Animation::Frame> frames = {frame};
- * Cairn::Animation::Animation animation(frames);
- * \endcode
+ * The animation can be paused, played, stopped, and reset.
+ * The duration of each frame can be set, and the animation can loop.
+ *
+ * Every animation is a resource that can also be saved and loaded.
  */
-class Animation {
+class Animation : public Resources::Resource, public JSONSerializable {
+
 public:
   Animation() = default;
 
-  explicit Animation(const std::vector<Frame>&& frames) : frames(frames) {}
+  explicit Animation(const std::vector<Frame>&& frames, bool should_loop = false)
+      : frames(frames), should_loop(should_loop) {}
 
   /** Get the frame at the given index. */
   const Frame* at(int index) const;
@@ -87,6 +69,11 @@ private:
 
   /** The time since the last frame was displayed. */
   float time_since_last_frame_ms = 0.f;
+
+protected:
+  virtual nlohmann::json to_json() const override;
+
+  virtual bool from_json(const nlohmann::json& json) override;
 };
 
 } // namespace Cairn::Animation
